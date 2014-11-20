@@ -2,3 +2,8 @@
 /Xclass/obj
 /Xclass/Xclass.csproj.user
 /Xclass/Xclass.suo
+/XclassTestsRunner/bin
+/XclassTestsRunner/obj
+/XclassTests/obj
+/Xclass/System.Data.SQLite.dll
+/Xclass/MySql.Data.dll
