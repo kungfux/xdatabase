@@ -33,6 +33,6 @@ if not exist "%NUnitConsole%" echo "NUnitConsole is not found. Please install or
 :: Perform code coverage test
 %OpenCoverConsole% "-register:user" "-target:%NUnitConsole%" "-targetdir:..\XclassTests\bin\Release" "-targetargs:XclassTests.dll /noshadow" "-output:.\TestsCodeCoverageResults.xml"
 :: Build reports
-%ReportGenerator% "-reports:.\TestsCodeCoverageResults.xml" "-targetdir:." "-reporttypes:html"
+%ReportGenerator% "-reports:.\TestsCodeCoverageResults.xml" "-filters:-XclassTests" "-targetdir:." "-reporttypes:html"
 :: Open report
 @start %cd%\index.htm
