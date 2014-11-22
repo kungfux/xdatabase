@@ -1,11 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual C# Express 2010
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Xclass", "Xclass.csproj", "{66D30008-D76A-4701-9C2A-77885DCFE952}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Xclass.Database", "Xclass.Database\Xclass.Database.csproj", "{66D30008-D76A-4701-9C2A-77885DCFE952}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XclassTests", "..\XclassTests\XclassTests.csproj", "{A979F58D-8C6C-4689-8463-9B5F16AC99A4}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XclassTests.Database", "XclassTests.Database\XclassTests.Database.csproj", "{A979F58D-8C6C-4689-8463-9B5F16AC99A4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XclassTestsRunner", "..\XclassTestsRunner\XclassTestsRunner.csproj", "{12C30D5F-4E1D-4379-B923-8D496AF1A373}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XclassTestsRunner", "XclassTestsRunner\XclassTestsRunner.csproj", "{12C30D5F-4E1D-4379-B923-8D496AF1A373}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

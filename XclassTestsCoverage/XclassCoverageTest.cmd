@@ -31,7 +31,7 @@ set NUnitConsole=C:\Program Files (x86)\NUnit 2.6.3\bin\nunit-console-x86.exe
 if not exist "%NUnitConsole%" echo "NUnitConsole is not found. Please install or check its location." && goto :eof
 
 :: Perform code coverage test
-%OpenCoverConsole% "-register:user" "-target:%NUnitConsole%" "-targetdir:..\XclassTests\bin\Release" "-targetargs:XclassTests.dll /noshadow" "-output:.\TestsCodeCoverageResults.xml"
+%OpenCoverConsole% "-register:user" "-target:%NUnitConsole%" "-targetdir:..\XclassTests.Database\bin\Release" "-targetargs:XclassTests.dll /noshadow" "-output:.\TestsCodeCoverageResults.xml"
 :: Build reports
 %ReportGenerator% "-reports:.\TestsCodeCoverageResults.xml" "-filters:-XclassTests" "-targetdir:." "-reporttypes:html"
 :: Open report

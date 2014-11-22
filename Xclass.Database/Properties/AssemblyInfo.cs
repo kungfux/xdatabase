@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Xclass")]
-[assembly: AssemblyDescription(".NET class library")]
+[assembly: AssemblyTitle("Xclass.Database")]
+[assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("Xclass")]
+[assembly: AssemblyProduct("Xclass.Database")]
 [assembly: AssemblyCopyright("Copyright © Fuks Alexander 2014")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
