@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright 2010-2014 Fuks Alexander. Contacts: kungfux2010@gmail.com
+ * Copyright 2014 Fuks Alexander. Contacts: kungfux2010@gmail.com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,19 +16,17 @@
 
 using System;
 using System.Data;
-using System.Data.OleDb;
+using System.Data.SQLite;
 
 namespace Xclass.Database
 {
     /// <summary>
-    /// Provide methods for connection and performing queries to database through OLEDB
+    /// Provide methods for connection and performing queries to SQLite database
+    /// WARNING! This class has dependency: System.Data.SQLite.dll (Precompiled Binary for .NET from http://www.sqlite.org/)
     /// </summary>
-    public class OleDb
+    public class SQLite3
     {
-        /// <summary>
-        /// OleDbConnection instance
-        /// </summary>
-        private readonly OleDbConnection connection = new OleDbConnection();
+        private readonly SQLiteConnection connection = new SQLiteConnection();
 
         /// <summary>
         /// Register error for last operation
@@ -92,14 +90,14 @@ namespace Xclass.Database
         /// <summary>
         /// Perform connection test
         /// </summary>
-        /// <param name="pConnectionString">Connection string e.g. "Provider=Microsoft.Jet.OleDb.4.0;Data Source=db.mdb;"</param>
+        /// <param name="pConnectionString">Connection string e.g. "Data Source=db.sqlite;Version=3;UTF8Encoding=True;foreign keys=true;"</param>
         /// <param name="pSaveIfSuccess">Save connection string from pSaveIfSuccess to ConnectionString if success</param>
         /// <param name="pKeepDatabaseOpened">Keep connection opened</param>
         /// <returns>True if connection can be established and false if operation is failed</returns>
         public bool TestConnection(string pConnectionString = null, bool pSaveIfSuccess = false, bool pKeepDatabaseOpened = false)
         {
             clearError();
-            using (var connect = new OleDbConnection(pConnectionString))
+            using (var connect = new SQLiteConnection(pConnectionString))
             {
                 try
                 {
@@ -134,17 +132,17 @@ namespace Xclass.Database
         /// <param name="pQuerySql">Query statement</param>
         /// <param name="pArgs">Query arguments</param>
         /// <returns>System.Data.DataTable or null</returns>
-        public DataTable SelectTable(string pQuerySql, params OleDbParameter[] pArgs)
+        public DataTable SelectTable(string pQuerySql, params SQLiteParameter[] pArgs)
         {
             clearError();
             var table = new DataTable();
             try
             {
-                if (!IsConnectionIsActive) 
+                if (!IsConnectionIsActive)
                 {
                     connection.Open();
                 }
-                using (var adapter = new OleDbDataAdapter(pQuerySql, connection))
+                using (var adapter = new SQLiteDataAdapter(pQuerySql, connection))
                 {
                     adapter.SelectCommand.Parameters.Clear();
                     if (pArgs != null)
@@ -165,7 +163,7 @@ namespace Xclass.Database
             }
             finally
             {
-                if (!KeepDatabaseOpened) 
+                if (!KeepDatabaseOpened)
                 {
                     connection.Close();
                 }
@@ -178,7 +176,7 @@ namespace Xclass.Database
         /// <param name="pQuerySql">Query statement</param>
         /// <param name="pArgs">Query arguments</param>
         /// <returns>System.Data.DataRow or null</returns>
-        public DataRow SelectRow(string pQuerySql, params OleDbParameter[] pArgs)
+        public DataRow SelectRow(string pQuerySql, params SQLiteParameter[] pArgs)
         {
             var table = SelectTable(pQuerySql, pArgs);
             return table != null && table.Rows.Count == 1 ? table.Rows[0] : null;
@@ -191,7 +189,7 @@ namespace Xclass.Database
         /// <param name="pReturnRowIndex">Row index/number to return</param>
         /// <param name="pArgs">Query arguments</param>
         /// <returns>System.Data.DataRow or null</returns>
-        public DataRow SelectRow(string pQuerySql, int pReturnRowIndex, params OleDbParameter[] pArgs)
+        public DataRow SelectRow(string pQuerySql, int pReturnRowIndex, params SQLiteParameter[] pArgs)
         {
             var table = SelectTable(pQuerySql, pArgs);
             return table != null && table.Rows.Count > 0 && table.Rows.Count >= pReturnRowIndex ? table.Rows[pReturnRowIndex] : null;
@@ -203,7 +201,7 @@ namespace Xclass.Database
         /// <param name="pQuerySql">Query statement</param>
         /// <param name="pArgs">Query arguments</param>
         /// <returns>System.Data.DataRow or null</returns>
-        public DataColumn SelectColumn(string pQuerySql, params OleDbParameter[] pArgs)
+        public DataColumn SelectColumn(string pQuerySql, params SQLiteParameter[] pArgs)
         {
             var table = SelectTable(pQuerySql, pArgs);
             return table != null && table.Columns.Count == 1 ? table.Columns[0] : null;
@@ -216,7 +214,7 @@ namespace Xclass.Database
         /// <param name="pReturnColumnIndex">Column index/number to return</param>
         /// <param name="pArgs">Query arguments</param>
         /// <returns>System.Data.DataColumn or null</returns>
-        public DataColumn SelectColumn(string pQuerySql, int pReturnColumnIndex, params OleDbParameter[] pArgs)
+        public DataColumn SelectColumn(string pQuerySql, int pReturnColumnIndex, params SQLiteParameter[] pArgs)
         {
             var table = SelectTable(pQuerySql, pArgs);
             return table != null && table.Columns.Count > 0 && table.Columns.Count >= pReturnColumnIndex ? table.Columns[pReturnColumnIndex] : null;
@@ -229,7 +227,7 @@ namespace Xclass.Database
         /// <param name="pQuerySql">Query statement</param>
         /// <param name="pArgs">Query arguments</param>
         /// <returns>System.Data.DataRow or null</returns>
-        public T SelectCell<T>(string pQuerySql, params OleDbParameter[] pArgs)
+        public T SelectCell<T>(string pQuerySql, params SQLiteParameter[] pArgs)
         {
             var table = SelectTable(pQuerySql, pArgs);
             if (table != null && table.Rows.Count == 1 && table.Columns.Count == 1 && table.Rows[0].ItemArray[0].GetType() == typeof(T))
@@ -263,7 +261,7 @@ namespace Xclass.Database
         /// <param name="pDefaultValue">Default value that will be returned in case of error</param>
         /// <param name="pArgs">Query arguments</param>
         /// <returns>System.Data.DataRow or null</returns>
-        public T SelectCell<T>(string pQuerySql, T pDefaultValue = default(T), params OleDbParameter[] pArgs)
+        public T SelectCell<T>(string pQuerySql, T pDefaultValue = default(T), params SQLiteParameter[] pArgs)
         {
             var table = SelectTable(pQuerySql, pArgs);
             if (table != null && table.Rows.Count == 1 && table.Columns.Count == 1 && table.Rows[0].ItemArray[0].GetType() == typeof(T))
@@ -282,16 +280,16 @@ namespace Xclass.Database
         /// <param name="pQuerySql">Query statement</param>
         /// <param name="pArgs">Query arguments</param>
         /// <returns>Number of affected rows or -1 in case error occur</returns>
-        public int ChangeData(string pQuerySql, params OleDbParameter[] pArgs)
+        public int ChangeData(string pQuerySql, params SQLiteParameter[] pArgs)
         {
             clearError();
             try
             {
-                if (connection.State == ConnectionState.Closed) 
+                if (connection.State == ConnectionState.Closed)
                 {
                     connection.Open();
                 }
-                using (var command = new OleDbCommand(pQuerySql, connection))
+                using (var command = new SQLiteCommand(pQuerySql, connection))
                 {
                     if (pArgs != null)
                     {
@@ -310,7 +308,7 @@ namespace Xclass.Database
             }
             finally
             {
-                if (!KeepDatabaseOpened) 
+                if (!KeepDatabaseOpened)
                 {
                     connection.Close();
                 }

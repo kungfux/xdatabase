@@ -24,8 +24,8 @@ namespace XclassTests.Database
     [TestFixture]
     public class OleDbTests
     {
-        // connection string to connect to db.mdb local test database
-        private const string connectionString = @"Provider=Microsoft.Jet.OleDb.4.0;Data Source=.\TestDataStorage\OleDbTestDatabase.mdb;";
+        // connection string to connect to TestDataStorage\OleDbTestDatabase.mdb local test database
+        private const string connectionString = @"Provider=Microsoft.Jet.OleDb.4.0;Data Source=.\TestDataStorage\TestDatabase.mdb;";
 
         // sql query statement to drop test table
         private const string sqlDropTestTable = "DROP TABLE test;";
@@ -283,7 +283,7 @@ namespace XclassTests.Database
             OleDb odd = new OleDb();
             Assert.IsTrue(odd.TestConnection(connectionString, true, false));
             Assert.IsNull(odd.SelectRow("SELECT f1 FROM WrongTable;"));
-            Assert.IsNull(odd.SelectRow("SELECT TOP 2 f1 FROM TestTable;"));
+            Assert.IsNull(odd.SelectRow("SELECT f1 FROM TestTable UNION ALL SELECT f2 FROM TestTable;"));
         }
     }
 }
