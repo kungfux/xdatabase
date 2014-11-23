@@ -22,7 +22,7 @@ namespace Xclass.Database
 {
     /// <summary>
     /// Provide methods for connection and performing queries to SQLite database
-    /// WARNING! This class has dependency: System.Data.SQLite.dll (Precompiled Binary for .NET from http://www.sqlite.org/)
+    /// WARNING! This class has dependencies: System.Data.SQLite.dll, SQLite.Interop.dll (Precompiled Binary for .NET from http://www.sqlite.org/)
     /// </summary>
     public class SQLite3
     {
