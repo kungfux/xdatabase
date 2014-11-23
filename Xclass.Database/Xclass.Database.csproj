@@ -49,9 +49,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="MySQL.cs" />
-    <Compile Include="OleDb.cs" />
-    <Compile Include="SQLite3.cs" />
+    <Compile Include="MySqlQuery.cs" />
+    <Compile Include="OleDbQuery.cs" />
+    <Compile Include="SQLite3Query.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

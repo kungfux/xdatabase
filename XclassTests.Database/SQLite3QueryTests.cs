@@ -22,7 +22,7 @@ using System.Data.SQLite;
 namespace XclassTests.Database
 {
     [TestFixture]
-    public class SQLite3Tests
+    public class SQLite3QueryTests
     {
         // connection string to connect to SQLiteTestDatabase.sqlite local test database
         private const string connectionString = @"Data Source=TestDataStorage\TestDatabase.sqlite;Version=3;FailIfMissing=True;UTF8Encoding=True;foreign keys=true;";
@@ -54,35 +54,58 @@ namespace XclassTests.Database
         [Test(Description = "Check that ConnectionString field is null")]
         public void TestInitialState_ConnectionString_IsNull()
         {
-            SQLite3 sqlite = new SQLite3();
+            SQLite3Query sqlite = new SQLite3Query();
             Assert.IsNullOrEmpty(sqlite.ConnectionString);
         }
 
         [Test(Description = "Check that KeepOpened field if false")]
         public void TestInitialState_KeepDatabaseOpened_IsFalse()
         {
-            SQLite3 sqlite = new SQLite3();
+            SQLite3Query sqlite = new SQLite3Query();
             Assert.IsFalse(sqlite.KeepDatabaseOpened);
         }
 
         [Test(Description = "Check that IsConnectionIsAlive field is false")]
         public void TestInitialState_IsConnectionIsActive_IsFalse()
         {
-            SQLite3 sqlite = new SQLite3();
+            SQLite3Query sqlite = new SQLite3Query();
             Assert.IsFalse(sqlite.IsConnectionIsActive);
         }
 
         [Test(Description = "Check that LastOperationErrorMessage field is empty")]
         public void TestInitialState_LastOperationErrorMessage_IsNull()
         {
-            SQLite3 sqlite = new SQLite3();
+            SQLite3Query sqlite = new SQLite3Query();
             Assert.IsNullOrEmpty(sqlite.LastOperationErrorMessage);
+        }
+
+        [Test(Description = "Check that OperationTimeout is set to 30s by default")]
+        public void TestInitialState_OperationTimeout_DefaultValue()
+        {
+            SQLite3Query sqlite = new SQLite3Query();
+            Assert.AreEqual(30, sqlite.OperationTimeout);
+        }
+
+        [Test(Description = "Check that OperationTimeout can be changed")]
+        public void TestInitialState_OperationTimeout_Change()
+        {
+            SQLite3Query sqlite = new SQLite3Query();
+            sqlite.OperationTimeout = 2;
+            Assert.AreEqual(2, sqlite.OperationTimeout);
+        }
+
+        [Test(Description = "Check that OperationTimeout can not be set to zero")]
+        public void TestInitialState_OperationTimeout_Zero()
+        {
+            SQLite3Query sqlite = new SQLite3Query();
+            sqlite.OperationTimeout = 0;
+            Assert.AreEqual(30, sqlite.OperationTimeout);
         }
 
         [Test(Description = "Check that error message is generated in case connection was unsuccessful")]
         public void TestConnection_ConnectionStringIsNotDefined()
         {
-            SQLite3 sqlite = new SQLite3();
+            SQLite3Query sqlite = new SQLite3Query();
             Assert.IsFalse(sqlite.TestConnection(""));
             Assert.IsNotNullOrEmpty(sqlite.LastOperationErrorMessage);
             Assert.IsFalse(sqlite.IsConnectionIsActive);
@@ -91,7 +114,7 @@ namespace XclassTests.Database
         [Test(Description = "Check that connection is not active in case no connection established")]
         public void TestConnection_ConnectionStringIsNotDefined2()
         {
-            SQLite3 sqlite = new SQLite3();
+            SQLite3Query sqlite = new SQLite3Query();
             Assert.IsFalse(sqlite.TestConnection("", true));
             Assert.IsNotNullOrEmpty(sqlite.LastOperationErrorMessage);
             Assert.IsFalse(sqlite.IsConnectionIsActive);
@@ -100,7 +123,7 @@ namespace XclassTests.Database
         [Test(Description = "Check that connection can be established")]
         public void TestConnection_CanBeEstablished1()
         {
-            SQLite3 sqlite = new SQLite3();
+            SQLite3Query sqlite = new SQLite3Query();
             Assert.IsTrue(sqlite.TestConnection(connectionString));
         }
 
@@ -108,7 +131,7 @@ namespace XclassTests.Database
             "and disconnect method works properly")]
         public void TestConnection_CanBeEstablished2()
         {
-            SQLite3 sqlite = new SQLite3();
+            SQLite3Query sqlite = new SQLite3Query();
             Assert.IsTrue(sqlite.TestConnection(connectionString, true, true));
             Assert.That(connectionString, Is.EqualTo(sqlite.ConnectionString));
             Assert.IsFalse(sqlite.IsConnectionIsActive);
@@ -120,7 +143,7 @@ namespace XclassTests.Database
             "and error message is generated in case change operation")]
         public void ChangeData_CreateTable_WithoutInitialization()
         {
-            SQLite3 sqlite = new SQLite3();
+            SQLite3Query sqlite = new SQLite3Query();
             Assert.AreEqual(-1, sqlite.ChangeData(sqlTestTableStatement));
             Assert.IsNotNullOrEmpty(sqlite.LastOperationErrorMessage);
         }
@@ -128,7 +151,7 @@ namespace XclassTests.Database
         [Test(Description = "Check that new table can be created in the database without errors")]
         public void ChangeData_CreateTable()
         {
-            SQLite3 sqlite = new SQLite3();
+            SQLite3Query sqlite = new SQLite3Query();
             Assert.IsTrue(sqlite.TestConnection(connectionString, true, false));
             if (sqlite.SelectTable("SELECT * FROM test;") != null)
             {
@@ -141,7 +164,7 @@ namespace XclassTests.Database
         [Test(Description = "Check that select can be executed without errors")]
         public void SelectTable_SelectWholeTable()
         {
-            SQLite3 sqlite = new SQLite3();
+            SQLite3Query sqlite = new SQLite3Query();
             Assert.IsTrue(sqlite.TestConnection(connectionString, true, false));
             Assert.IsNotNull(sqlite.SelectTable("SELECT * FROM TestTable;"));
             Assert.IsNullOrEmpty(sqlite.LastOperationErrorMessage);
@@ -150,7 +173,7 @@ namespace XclassTests.Database
         [Test(Description = "Check that select can be executed without errors using arguments")]
         public void SelectTable_SelectTableUsingArguments()
         {
-            SQLite3 sqlite = new SQLite3();
+            SQLite3Query sqlite = new SQLite3Query();
             Assert.IsTrue(sqlite.TestConnection(connectionString, true, false));
             Assert.AreEqual("text1", sqlite.SelectTable("SELECT f1 FROM TestTable WHERE f1=@param;", new SQLiteParameter("@param", "text1")).Rows[0].ItemArray[0]);
             Assert.IsNullOrEmpty(sqlite.LastOperationErrorMessage);
@@ -159,7 +182,7 @@ namespace XclassTests.Database
         [Test(Description = "Check that SelectCell<> can be executed without errors")]
         public void SelectCell_DataTypes1()
         {
-            SQLite3 sqlite = new SQLite3();
+            SQLite3Query sqlite = new SQLite3Query();
             Assert.IsTrue(sqlite.TestConnection(connectionString, true, true));
             Assert.AreEqual(DBNull.Value, sqlite.SelectCell<DBNull>("SELECT f4 FROM TestTable;"));
             Assert.AreEqual(DateTime.Now.ToString("dd.MM.yyyy"), Convert.ToDateTime(sqlite.SelectCell<string>("SELECT date('now');")).ToString("dd.MM.yyyy"));
@@ -170,7 +193,7 @@ namespace XclassTests.Database
         [TestCase((double)1.1, "SELECT f3 FROM TestTable;")]
         public void SelectCellTest<T>(T pExpectedValue, string sqlSelectStatement)
         {
-            SQLite3 sqlite = new SQLite3();
+            SQLite3Query sqlite = new SQLite3Query();
             Assert.IsTrue(sqlite.TestConnection(connectionString, true, false));
             Assert.AreEqual(pExpectedValue, sqlite.SelectCell<T>(sqlSelectStatement));
         }
@@ -179,7 +202,7 @@ namespace XclassTests.Database
         [ExpectedException("System.FormatException")]
         public void SelectCell_WrongUsing1()
         {
-            SQLite3 sqlite = new SQLite3();
+            SQLite3Query sqlite = new SQLite3Query();
             Assert.IsTrue(sqlite.TestConnection(connectionString, true, true));
             sqlite.SelectCell<bool>("SELECT  f1 FROM TestTable;");
         }
@@ -188,7 +211,7 @@ namespace XclassTests.Database
         [ExpectedException("System.Data.DataException")]
         public void SelectCell_WrongUsing2()
         {
-            SQLite3 sqlite = new SQLite3();
+            SQLite3Query sqlite = new SQLite3Query();
             Assert.IsTrue(sqlite.TestConnection(connectionString, true, true));
             sqlite.SelectCell<bool>("SELECT f1,f2 FROM TestTable;");
         }
@@ -197,7 +220,7 @@ namespace XclassTests.Database
         [ExpectedException("System.Data.DataException")]
         public void SelectCell_WrongUsing3()
         {
-            SQLite3 sqlite = new SQLite3();
+            SQLite3Query sqlite = new SQLite3Query();
             Assert.IsTrue(sqlite.TestConnection(connectionString, true, true));
             sqlite.SelectCell<bool>("SELECT f1,f2 FROM WrongTable;");
         }
@@ -205,7 +228,7 @@ namespace XclassTests.Database
         [Test(Description = "Check that SelectCell<> with default return values defined works correcly")]
         public void SelectCell_DefaultReturnValues()
         {
-            SQLite3 sqlite = new SQLite3();
+            SQLite3Query sqlite = new SQLite3Query();
             Assert.IsTrue(sqlite.TestConnection(connectionString, true, false));
             Assert.AreEqual(true, Convert.ToBoolean(sqlite.SelectCell<Int64>("SELECT f2 FROM TestTable;", 0)));
             Assert.AreEqual(true, sqlite.SelectCell<bool>("SELECT f999 FROM TestTable;", true));
@@ -214,7 +237,7 @@ namespace XclassTests.Database
         [Test(Description = "Check that SelectColumn() works correcly")]
         public void SelectColumn()
         {
-            SQLite3 sqlite = new SQLite3();
+            SQLite3Query sqlite = new SQLite3Query();
             Assert.IsTrue(sqlite.TestConnection(connectionString, true, false));
             Assert.IsNotNull(sqlite.SelectColumn("SELECT f1 FROM TestTable;"));
             Assert.IsNotNull(sqlite.SelectColumn("SELECT * FROM TestTable;", 0));
@@ -223,7 +246,7 @@ namespace XclassTests.Database
         [Test(Description = "Check that SelectColumn() works correcly in case wrong results")]
         public void SelectColumn_WrongUsing()
         {
-            SQLite3 sqlite = new SQLite3();
+            SQLite3Query sqlite = new SQLite3Query();
             Assert.IsTrue(sqlite.TestConnection(connectionString, true, false));
             Assert.IsNull(sqlite.SelectColumn("SELECT f1 FROM WrongTable;"));
             Assert.IsNull(sqlite.SelectColumn("SELECT f1,f2 FROM TestTable;"));
@@ -232,7 +255,7 @@ namespace XclassTests.Database
         [Test(Description = "Check that SelectRow() works correcly")]
         public void SelectRow()
         {
-            SQLite3 sqlite = new SQLite3();
+            SQLite3Query sqlite = new SQLite3Query();
             Assert.IsTrue(sqlite.TestConnection(connectionString, true, false));
             Assert.IsNotNull(sqlite.SelectRow("SELECT f1 FROM TestTable;"));
             Assert.IsNotNull(sqlite.SelectRow("SELECT * FROM TestTable;", 0));
@@ -241,7 +264,7 @@ namespace XclassTests.Database
         [Test(Description = "Check that SelectRow() works correcly in case wrong results")]
         public void SelectRow_WrongUsing()
         {
-            SQLite3 sqlite = new SQLite3();
+            SQLite3Query sqlite = new SQLite3Query();
             Assert.IsTrue(sqlite.TestConnection(connectionString, true, false));
             Assert.IsNull(sqlite.SelectRow("SELECT f1 FROM WrongTable;"));
             Assert.IsNull(sqlite.SelectRow("SELECT f1 FROM TestTable UNION ALL SELECT f1 FROM TestTable;"));

@@ -16,17 +16,17 @@
 
 using System;
 using System.Data;
-using MySql.Data.MySqlClient;
+using System.Data.SQLite;
 
 namespace Xclass.Database
 {
     /// <summary>
-    /// Provide methods for connection and performing queries to MySQL database
-    /// WARNING! This class has dependency: MySql.Data.dll (MySQL Connector/NET from http://www.mysql.com)
+    /// Provide methods for connection and performing queries to SQLite database
+    /// WARNING! This class has dependencies: System.Data.SQLite.dll, SQLite.Interop.dll (Precompiled Binary for .NET from http://www.sqlite.org/)
     /// </summary>
-    public class MySQL
+    public class SQLite3Query
     {
-        private readonly MySqlConnection connection = new MySqlConnection();
+        private readonly SQLiteConnection connection = new SQLiteConnection();
 
         /// <summary>
         /// Register error for last operation
@@ -53,6 +53,29 @@ namespace Xclass.Database
             get
             {
                 return connection.ConnectionString;
+            }
+        }
+
+        /// <summary>
+        /// Contains time in seconds for all operations timeout
+        /// </summary>
+        private int operationTimeout = 30;
+
+        /// <summary>
+        /// Contains time in seconds for all operations timeout
+        /// </summary>
+        public int OperationTimeout
+        {
+            get
+            {
+                return operationTimeout;
+            }
+            set
+            {
+                if (value > 0)
+                {
+                    operationTimeout = value;
+                }
             }
         }
 
@@ -85,19 +108,19 @@ namespace Xclass.Database
         {
             get;
             private set;
-        }      
+        }
 
         /// <summary>
         /// Perform connection test
         /// </summary>
-        /// <param name="pConnectionString">Connection string e.g. "Server=http://server.com;Database=DatabaseName;Uid=Username;Pwd=Password;"</param>
+        /// <param name="pConnectionString">Connection string e.g. "Data Source=db.sqlite;Version=3;UTF8Encoding=True;foreign keys=true;"</param>
         /// <param name="pSaveIfSuccess">Save connection string from pSaveIfSuccess to ConnectionString if success</param>
         /// <param name="pKeepDatabaseOpened">Keep connection opened</param>
         /// <returns>True if connection can be established and false if operation is failed</returns>
         public bool TestConnection(string pConnectionString = null, bool pSaveIfSuccess = false, bool pKeepDatabaseOpened = false)
         {
             clearError();
-            using (var connect = new MySqlConnection(pConnectionString))
+            using (var connect = new SQLiteConnection(pConnectionString))
             {
                 try
                 {
@@ -132,7 +155,7 @@ namespace Xclass.Database
         /// <param name="pQuerySql">Query statement</param>
         /// <param name="pArgs">Query arguments</param>
         /// <returns>System.Data.DataTable or null</returns>
-        public DataTable SelectTable(string pQuerySql, params MySqlParameter[] pArgs)
+        public DataTable SelectTable(string pQuerySql, params SQLiteParameter[] pArgs)
         {
             clearError();
             var table = new DataTable();
@@ -142,9 +165,10 @@ namespace Xclass.Database
                 {
                     connection.Open();
                 }
-                using (var adapter = new MySqlDataAdapter(pQuerySql, connection))
+                using (var adapter = new SQLiteDataAdapter(pQuerySql, connection))
                 {
                     adapter.SelectCommand.Parameters.Clear();
+                    adapter.SelectCommand.CommandTimeout = OperationTimeout;
                     if (pArgs != null)
                     {
                         foreach (var arg in pArgs)
@@ -176,7 +200,7 @@ namespace Xclass.Database
         /// <param name="pQuerySql">Query statement</param>
         /// <param name="pArgs">Query arguments</param>
         /// <returns>System.Data.DataRow or null</returns>
-        public DataRow SelectRow(string pQuerySql, params MySqlParameter[] pArgs)
+        public DataRow SelectRow(string pQuerySql, params SQLiteParameter[] pArgs)
         {
             var table = SelectTable(pQuerySql, pArgs);
             return table != null && table.Rows.Count == 1 ? table.Rows[0] : null;
@@ -189,7 +213,7 @@ namespace Xclass.Database
         /// <param name="pReturnRowIndex">Row index/number to return</param>
         /// <param name="pArgs">Query arguments</param>
         /// <returns>System.Data.DataRow or null</returns>
-        public DataRow SelectRow(string pQuerySql, int pReturnRowIndex, params MySqlParameter[] pArgs)
+        public DataRow SelectRow(string pQuerySql, int pReturnRowIndex, params SQLiteParameter[] pArgs)
         {
             var table = SelectTable(pQuerySql, pArgs);
             return table != null && table.Rows.Count > 0 && table.Rows.Count >= pReturnRowIndex ? table.Rows[pReturnRowIndex] : null;
@@ -201,7 +225,7 @@ namespace Xclass.Database
         /// <param name="pQuerySql">Query statement</param>
         /// <param name="pArgs">Query arguments</param>
         /// <returns>System.Data.DataRow or null</returns>
-        public DataColumn SelectColumn(string pQuerySql, params MySqlParameter[] pArgs)
+        public DataColumn SelectColumn(string pQuerySql, params SQLiteParameter[] pArgs)
         {
             var table = SelectTable(pQuerySql, pArgs);
             return table != null && table.Columns.Count == 1 ? table.Columns[0] : null;
@@ -214,7 +238,7 @@ namespace Xclass.Database
         /// <param name="pReturnColumnIndex">Column index/number to return</param>
         /// <param name="pArgs">Query arguments</param>
         /// <returns>System.Data.DataColumn or null</returns>
-        public DataColumn SelectColumn(string pQuerySql, int pReturnColumnIndex, params MySqlParameter[] pArgs)
+        public DataColumn SelectColumn(string pQuerySql, int pReturnColumnIndex, params SQLiteParameter[] pArgs)
         {
             var table = SelectTable(pQuerySql, pArgs);
             return table != null && table.Columns.Count > 0 && table.Columns.Count >= pReturnColumnIndex ? table.Columns[pReturnColumnIndex] : null;
@@ -227,7 +251,7 @@ namespace Xclass.Database
         /// <param name="pQuerySql">Query statement</param>
         /// <param name="pArgs">Query arguments</param>
         /// <returns>System.Data.DataRow or null</returns>
-        public T SelectCell<T>(string pQuerySql, params MySqlParameter[] pArgs)
+        public T SelectCell<T>(string pQuerySql, params SQLiteParameter[] pArgs)
         {
             var table = SelectTable(pQuerySql, pArgs);
             if (table != null && table.Rows.Count == 1 && table.Columns.Count == 1 && table.Rows[0].ItemArray[0].GetType() == typeof(T))
@@ -261,7 +285,7 @@ namespace Xclass.Database
         /// <param name="pDefaultValue">Default value that will be returned in case of error</param>
         /// <param name="pArgs">Query arguments</param>
         /// <returns>System.Data.DataRow or null</returns>
-        public T SelectCell<T>(string pQuerySql, T pDefaultValue = default(T), params MySqlParameter[] pArgs)
+        public T SelectCell<T>(string pQuerySql, T pDefaultValue = default(T), params SQLiteParameter[] pArgs)
         {
             var table = SelectTable(pQuerySql, pArgs);
             if (table != null && table.Rows.Count == 1 && table.Columns.Count == 1 && table.Rows[0].ItemArray[0].GetType() == typeof(T))
@@ -280,7 +304,7 @@ namespace Xclass.Database
         /// <param name="pQuerySql">Query statement</param>
         /// <param name="pArgs">Query arguments</param>
         /// <returns>Number of affected rows or -1 in case error occur</returns>
-        public int ChangeData(string pQuerySql, params MySqlParameter[] pArgs)
+        public int ChangeData(string pQuerySql, params SQLiteParameter[] pArgs)
         {
             clearError();
             try
@@ -289,8 +313,9 @@ namespace Xclass.Database
                 {
                     connection.Open();
                 }
-                using (var command = new MySqlCommand(pQuerySql, connection))
+                using (var command = new SQLiteCommand(pQuerySql, connection))
                 {
+                    command.CommandTimeout = OperationTimeout;
                     if (pArgs != null)
                     {
                         foreach (var arg in pArgs)

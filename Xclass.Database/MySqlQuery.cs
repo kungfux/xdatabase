@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright 2010-2014 Fuks Alexander. Contacts: kungfux2010@gmail.com
+ * Copyright 2014 Fuks Alexander. Contacts: kungfux2010@gmail.com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,19 +16,17 @@
 
 using System;
 using System.Data;
-using System.Data.OleDb;
+using MySql.Data.MySqlClient;
 
 namespace Xclass.Database
 {
     /// <summary>
-    /// Provide methods for connection and performing queries to database through OLEDB
+    /// Provide methods for connection and performing queries to MySQL database
+    /// WARNING! This class has dependency: MySql.Data.dll (MySQL Connector/NET from http://www.mysql.com)
     /// </summary>
-    public class OleDb
+    public class MySqlQuery
     {
-        /// <summary>
-        /// OleDbConnection instance
-        /// </summary>
-        private readonly OleDbConnection connection = new OleDbConnection();
+        private readonly MySqlConnection connection = new MySqlConnection();
 
         /// <summary>
         /// Register error for last operation
@@ -55,6 +53,29 @@ namespace Xclass.Database
             get
             {
                 return connection.ConnectionString;
+            }
+        }
+
+        /// <summary>
+        /// Contains time in seconds for all operations timeout
+        /// </summary>
+        private int operationTimeout = 30;
+
+        /// <summary>
+        /// Contains time in seconds for all operations timeout
+        /// </summary>
+        public int OperationTimeout
+        {
+            get
+            {
+                return operationTimeout;
+            }
+            set
+            {
+                if (value > 0)
+                {
+                    operationTimeout = value;
+                }
             }
         }
 
@@ -87,19 +108,19 @@ namespace Xclass.Database
         {
             get;
             private set;
-        }
+        }      
 
         /// <summary>
         /// Perform connection test
         /// </summary>
-        /// <param name="pConnectionString">Connection string e.g. "Provider=Microsoft.Jet.OleDb.4.0;Data Source=db.mdb;"</param>
+        /// <param name="pConnectionString">Connection string e.g. "Server=http://server.com;Database=DatabaseName;Uid=Username;Pwd=Password;"</param>
         /// <param name="pSaveIfSuccess">Save connection string from pSaveIfSuccess to ConnectionString if success</param>
         /// <param name="pKeepDatabaseOpened">Keep connection opened</param>
         /// <returns>True if connection can be established and false if operation is failed</returns>
         public bool TestConnection(string pConnectionString = null, bool pSaveIfSuccess = false, bool pKeepDatabaseOpened = false)
         {
             clearError();
-            using (var connect = new OleDbConnection(pConnectionString))
+            using (var connect = new MySqlConnection(pConnectionString))
             {
                 try
                 {
@@ -134,19 +155,20 @@ namespace Xclass.Database
         /// <param name="pQuerySql">Query statement</param>
         /// <param name="pArgs">Query arguments</param>
         /// <returns>System.Data.DataTable or null</returns>
-        public DataTable SelectTable(string pQuerySql, params OleDbParameter[] pArgs)
+        public DataTable SelectTable(string pQuerySql, params MySqlParameter[] pArgs)
         {
             clearError();
             var table = new DataTable();
             try
             {
-                if (!IsConnectionIsActive) 
+                if (!IsConnectionIsActive)
                 {
                     connection.Open();
                 }
-                using (var adapter = new OleDbDataAdapter(pQuerySql, connection))
+                using (var adapter = new MySqlDataAdapter(pQuerySql, connection))
                 {
                     adapter.SelectCommand.Parameters.Clear();
+                    adapter.SelectCommand.CommandTimeout = OperationTimeout;
                     if (pArgs != null)
                     {
                         foreach (var arg in pArgs)
@@ -165,7 +187,7 @@ namespace Xclass.Database
             }
             finally
             {
-                if (!KeepDatabaseOpened) 
+                if (!KeepDatabaseOpened)
                 {
                     connection.Close();
                 }
@@ -178,7 +200,7 @@ namespace Xclass.Database
         /// <param name="pQuerySql">Query statement</param>
         /// <param name="pArgs">Query arguments</param>
         /// <returns>System.Data.DataRow or null</returns>
-        public DataRow SelectRow(string pQuerySql, params OleDbParameter[] pArgs)
+        public DataRow SelectRow(string pQuerySql, params MySqlParameter[] pArgs)
         {
             var table = SelectTable(pQuerySql, pArgs);
             return table != null && table.Rows.Count == 1 ? table.Rows[0] : null;
@@ -191,7 +213,7 @@ namespace Xclass.Database
         /// <param name="pReturnRowIndex">Row index/number to return</param>
         /// <param name="pArgs">Query arguments</param>
         /// <returns>System.Data.DataRow or null</returns>
-        public DataRow SelectRow(string pQuerySql, int pReturnRowIndex, params OleDbParameter[] pArgs)
+        public DataRow SelectRow(string pQuerySql, int pReturnRowIndex, params MySqlParameter[] pArgs)
         {
             var table = SelectTable(pQuerySql, pArgs);
             return table != null && table.Rows.Count > 0 && table.Rows.Count >= pReturnRowIndex ? table.Rows[pReturnRowIndex] : null;
@@ -203,7 +225,7 @@ namespace Xclass.Database
         /// <param name="pQuerySql">Query statement</param>
         /// <param name="pArgs">Query arguments</param>
         /// <returns>System.Data.DataRow or null</returns>
-        public DataColumn SelectColumn(string pQuerySql, params OleDbParameter[] pArgs)
+        public DataColumn SelectColumn(string pQuerySql, params MySqlParameter[] pArgs)
         {
             var table = SelectTable(pQuerySql, pArgs);
             return table != null && table.Columns.Count == 1 ? table.Columns[0] : null;
@@ -216,7 +238,7 @@ namespace Xclass.Database
         /// <param name="pReturnColumnIndex">Column index/number to return</param>
         /// <param name="pArgs">Query arguments</param>
         /// <returns>System.Data.DataColumn or null</returns>
-        public DataColumn SelectColumn(string pQuerySql, int pReturnColumnIndex, params OleDbParameter[] pArgs)
+        public DataColumn SelectColumn(string pQuerySql, int pReturnColumnIndex, params MySqlParameter[] pArgs)
         {
             var table = SelectTable(pQuerySql, pArgs);
             return table != null && table.Columns.Count > 0 && table.Columns.Count >= pReturnColumnIndex ? table.Columns[pReturnColumnIndex] : null;
@@ -229,7 +251,7 @@ namespace Xclass.Database
         /// <param name="pQuerySql">Query statement</param>
         /// <param name="pArgs">Query arguments</param>
         /// <returns>System.Data.DataRow or null</returns>
-        public T SelectCell<T>(string pQuerySql, params OleDbParameter[] pArgs)
+        public T SelectCell<T>(string pQuerySql, params MySqlParameter[] pArgs)
         {
             var table = SelectTable(pQuerySql, pArgs);
             if (table != null && table.Rows.Count == 1 && table.Columns.Count == 1 && table.Rows[0].ItemArray[0].GetType() == typeof(T))
@@ -263,7 +285,7 @@ namespace Xclass.Database
         /// <param name="pDefaultValue">Default value that will be returned in case of error</param>
         /// <param name="pArgs">Query arguments</param>
         /// <returns>System.Data.DataRow or null</returns>
-        public T SelectCell<T>(string pQuerySql, T pDefaultValue = default(T), params OleDbParameter[] pArgs)
+        public T SelectCell<T>(string pQuerySql, T pDefaultValue = default(T), params MySqlParameter[] pArgs)
         {
             var table = SelectTable(pQuerySql, pArgs);
             if (table != null && table.Rows.Count == 1 && table.Columns.Count == 1 && table.Rows[0].ItemArray[0].GetType() == typeof(T))
@@ -282,17 +304,18 @@ namespace Xclass.Database
         /// <param name="pQuerySql">Query statement</param>
         /// <param name="pArgs">Query arguments</param>
         /// <returns>Number of affected rows or -1 in case error occur</returns>
-        public int ChangeData(string pQuerySql, params OleDbParameter[] pArgs)
+        public int ChangeData(string pQuerySql, params MySqlParameter[] pArgs)
         {
             clearError();
             try
             {
-                if (connection.State == ConnectionState.Closed) 
+                if (connection.State == ConnectionState.Closed)
                 {
                     connection.Open();
                 }
-                using (var command = new OleDbCommand(pQuerySql, connection))
+                using (var command = new MySqlCommand(pQuerySql, connection))
                 {
+                    command.CommandTimeout = OperationTimeout;
                     if (pArgs != null)
                     {
                         foreach (var arg in pArgs)
@@ -310,7 +333,7 @@ namespace Xclass.Database
             }
             finally
             {
-                if (!KeepDatabaseOpened) 
+                if (!KeepDatabaseOpened)
                 {
                     connection.Close();
                 }

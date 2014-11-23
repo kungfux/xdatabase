@@ -22,12 +22,12 @@ using MySql.Data.MySqlClient;
 namespace XclassTests.Database
 {
     [TestFixture]
-    public class MySQLTests
+    public class MySqlQueryTests
     {
         [Test(Description = "")]
         public void Test_IamTooLazy()
         {
-            MySQL sqlite = new MySQL();
+            MySqlQuery sqlite = new MySqlQuery();
             Assert.Fail("I'm too lazy to write unit tests. I'll do it later. Really!");
         }
     }

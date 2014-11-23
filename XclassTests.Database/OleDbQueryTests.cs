@@ -22,7 +22,7 @@ using System.Data.OleDb;
 namespace XclassTests.Database
 {
     [TestFixture]
-    public class OleDbTests
+    public class OleDbQueryTests
     {
         // connection string to connect to TestDataStorage\OleDbTestDatabase.mdb local test database
         private const string connectionString = @"Provider=Microsoft.Jet.OleDb.4.0;Data Source=.\TestDataStorage\TestDatabase.mdb;";
@@ -79,35 +79,58 @@ namespace XclassTests.Database
         [Test(Description="Check that ConnectionString field is null")]
         public void TestInitialState_ConnectionString_IsNull()
         {
-            OleDb odd = new OleDb();
+            OleDbQuery odd = new OleDbQuery();
             Assert.IsNullOrEmpty(odd.ConnectionString);
         }
 
         [Test(Description = "Check that KeepOpened field if false")]
         public void TestInitialState_KeepDatabaseOpened_IsFalse()
         {
-            OleDb odd = new OleDb();
+            OleDbQuery odd = new OleDbQuery();
             Assert.IsFalse(odd.KeepDatabaseOpened);
         }
 
         [Test(Description = "Check that IsConnectionIsAlive field is false")]
         public void TestInitialState_IsConnectionIsActive_IsFalse()
         {
-            OleDb odd = new OleDb();
+            OleDbQuery odd = new OleDbQuery();
             Assert.IsFalse(odd.IsConnectionIsActive);
         }
 
         [Test(Description = "Check that LastOperationErrorMessage field is empty")]
         public void TestInitialState_LastOperationErrorMessage_IsNull()
         {
-            OleDb odd = new OleDb();
+            OleDbQuery odd = new OleDbQuery();
             Assert.IsNullOrEmpty(odd.LastOperationErrorMessage);
+        }
+
+        [Test(Description = "Check that OperationTimeout is set to 30s by default")]
+        public void TestInitialState_OperationTimeout_DefaultValue()
+        {
+            OleDbQuery odd = new OleDbQuery();
+            Assert.AreEqual(30, odd.OperationTimeout);
+        }
+
+        [Test(Description = "Check that OperationTimeout can be changed")]
+        public void TestInitialState_OperationTimeout_Change()
+        {
+            OleDbQuery odd = new OleDbQuery();
+            odd.OperationTimeout = 2;
+            Assert.AreEqual(2, odd.OperationTimeout);
+        }
+
+        [Test(Description = "Check that OperationTimeout can not be set to zero")]
+        public void TestInitialState_OperationTimeout_Zero()
+        {
+            OleDbQuery odd = new OleDbQuery();
+            odd.OperationTimeout = 0;
+            Assert.AreEqual(30, odd.OperationTimeout);
         }
 
         [Test(Description = "Check that error message is generated in case connection was unsuccessful")]
         public void TestConnection_ConnectionStringIsNotDefined()
         {
-            OleDb odd = new OleDb();
+            OleDbQuery odd = new OleDbQuery();
             Assert.IsFalse(odd.TestConnection(""));
             Assert.IsNotNullOrEmpty(odd.LastOperationErrorMessage);
             Assert.IsFalse(odd.IsConnectionIsActive);
@@ -116,7 +139,7 @@ namespace XclassTests.Database
         [Test(Description = "Check that connection is not active in case no connection established")]
         public void TestConnection_ConnectionStringIsNotDefined2()
         {
-            OleDb odd = new OleDb();
+            OleDbQuery odd = new OleDbQuery();
             Assert.IsFalse(odd.TestConnection("", true));
             Assert.IsNotNullOrEmpty(odd.LastOperationErrorMessage);
             Assert.IsFalse(odd.IsConnectionIsActive);
@@ -125,7 +148,7 @@ namespace XclassTests.Database
         [Test(Description = "Check that connection can be established")]
         public void TestConnection_CanBeEstablished1()
         {
-            OleDb odd = new OleDb();
+            OleDbQuery odd = new OleDbQuery();
             Assert.IsTrue(odd.TestConnection(connectionString));
         }
 
@@ -133,7 +156,7 @@ namespace XclassTests.Database
             "and disconnect method works properly")]
         public void TestConnection_CanBeEstablished2()
         {
-            OleDb odd = new OleDb();
+            OleDbQuery odd = new OleDbQuery();
             Assert.IsTrue(odd.TestConnection(connectionString, true, true));
             Assert.That(connectionString, Is.EqualTo(odd.ConnectionString));
             Assert.IsFalse(odd.IsConnectionIsActive);
@@ -145,7 +168,7 @@ namespace XclassTests.Database
             "and error message is generated in case change operation")]
         public void ChangeData_CreateTable_WithoutInitialization()
         {
-            OleDb odd = new OleDb();
+            OleDbQuery odd = new OleDbQuery();
             Assert.AreEqual(-1, odd.ChangeData(sqlTestTableStatement));
             Assert.IsNotNullOrEmpty(odd.LastOperationErrorMessage);
         }
@@ -153,7 +176,7 @@ namespace XclassTests.Database
         [Test(Description = "Check that new table can be created in the database without errors")]
         public void ChangeData_CreateTable()
         {
-            OleDb odd = new OleDb();
+            OleDbQuery odd = new OleDbQuery();
             Assert.IsTrue(odd.TestConnection(connectionString, true, false));
             if (odd.SelectTable("SELECT * FROM test;") != null)
             {
@@ -166,7 +189,7 @@ namespace XclassTests.Database
         [Test(Description = "Check that select can be executed without errors")]
         public void SelectTable_SelectWholeTable()
         {
-            OleDb odd = new OleDb();
+            OleDbQuery odd = new OleDbQuery();
             Assert.IsTrue(odd.TestConnection(connectionString, true, false));
             Assert.IsNotNull(odd.SelectTable("SELECT * FROM TestTable;"));
             Assert.IsNullOrEmpty(odd.LastOperationErrorMessage);
@@ -175,7 +198,7 @@ namespace XclassTests.Database
         [Test(Description = "Check that select can be executed without errors using arguments")]
         public void SelectTable_SelectTableUsingArguments()
         {
-            OleDb odd = new OleDb();
+            OleDbQuery odd = new OleDbQuery();
             Assert.IsTrue(odd.TestConnection(connectionString, true, false));
             Assert.AreEqual("a", odd.SelectTable("SELECT f1 FROM TestTable WHERE f1=@param;", new OleDbParameter("@param", 'a')).Rows[0].ItemArray[0]);
             Assert.IsNullOrEmpty(odd.LastOperationErrorMessage);
@@ -185,7 +208,7 @@ namespace XclassTests.Database
             "for several data types: Guid, DBNull, DateTime and currency")]
         public void SelectCell_DataTypes1()
         {
-            OleDb odd = new OleDb();          
+            OleDbQuery odd = new OleDbQuery();          
             Assert.IsTrue(odd.TestConnection(connectionString, true, true));
             Assert.AreEqual(Guid.Parse("{77E6E454-D883-4611-80B4-74AEE13F1C82}"), odd.SelectCell<Guid>("SELECT TOP 1 f9 FROM TestTable;"));
             Assert.AreEqual(DBNull.Value, odd.SelectCell<DBNull>("SELECT TOP 1 f10 FROM TestTable;")); // TODO: Replace DBNull.Value with real decimal(2,2)
@@ -209,7 +232,7 @@ namespace XclassTests.Database
         // TODO: Add binary testing
         public void SelectCellTest<T>(T pExpectedValue, string sqlSelectStatement)
         {
-            OleDb odd = new OleDb();
+            OleDbQuery odd = new OleDbQuery();
             Assert.IsTrue(odd.TestConnection(connectionString, true, false));
             Assert.AreEqual(pExpectedValue, odd.SelectCell<T>(sqlSelectStatement));
         }
@@ -218,7 +241,7 @@ namespace XclassTests.Database
         [ExpectedException("System.FormatException")]
         public void SelectCell_WrongUsing1()
         {
-            OleDb odd = new OleDb();
+            OleDbQuery odd = new OleDbQuery();
             Assert.IsTrue(odd.TestConnection(connectionString, true, true));
             odd.SelectCell<bool>("SELECT TOP 1 f1 FROM TestTable;");
         }
@@ -227,7 +250,7 @@ namespace XclassTests.Database
         [ExpectedException("System.Data.DataException")]
         public void SelectCell_WrongUsing2()
         {
-            OleDb odd = new OleDb();
+            OleDbQuery odd = new OleDbQuery();
             Assert.IsTrue(odd.TestConnection(connectionString, true, true));
             odd.SelectCell<bool>("SELECT TOP 1 f1,f2 FROM TestTable;");
         }
@@ -236,7 +259,7 @@ namespace XclassTests.Database
         [ExpectedException("System.Data.DataException")]
         public void SelectCell_WrongUsing3()
         {
-            OleDb odd = new OleDb();
+            OleDbQuery odd = new OleDbQuery();
             Assert.IsTrue(odd.TestConnection(connectionString, true, true));
             odd.SelectCell<bool>("SELECT TOP 1 f1,f2 FROM WrongTable;");
         }
@@ -244,7 +267,7 @@ namespace XclassTests.Database
         [Test(Description = "Check that SelectCell<> with default return values defined works correcly")]
         public void SelectCell_DefaultReturnValues()
         {
-            OleDb odd = new OleDb();
+            OleDbQuery odd = new OleDbQuery();
             Assert.IsTrue(odd.TestConnection(connectionString, true, false));
             Assert.AreEqual(true, odd.SelectCell<bool>("SELECT TOP 1 f14 FROM TestTable;", false));
             Assert.AreEqual(true, odd.SelectCell<bool>("SELECT TOP 1 f999 FROM TestTable;", true));
@@ -253,7 +276,7 @@ namespace XclassTests.Database
         [Test(Description = "Check that SelectColumn() works correcly")]
         public void SelectColumn()
         {
-            OleDb odd = new OleDb();
+            OleDbQuery odd = new OleDbQuery();
             Assert.IsTrue(odd.TestConnection(connectionString, true, false));
             Assert.IsNotNull(odd.SelectColumn("SELECT f1 FROM TestTable;"));
             Assert.IsNotNull(odd.SelectColumn("SELECT * FROM TestTable;", 0));
@@ -262,7 +285,7 @@ namespace XclassTests.Database
         [Test(Description = "Check that SelectColumn() works correcly in case wrong results")]
         public void SelectColumn_WrongUsing()
         {
-            OleDb odd = new OleDb();
+            OleDbQuery odd = new OleDbQuery();
             Assert.IsTrue(odd.TestConnection(connectionString, true, false));
             Assert.IsNull(odd.SelectColumn("SELECT f1 FROM WrongTable;"));
             Assert.IsNull(odd.SelectColumn("SELECT f1,f2 FROM TestTable;"));
@@ -271,7 +294,7 @@ namespace XclassTests.Database
         [Test(Description = "Check that SelectRow() works correcly")]
         public void SelectRow()
         {
-            OleDb odd = new OleDb();
+            OleDbQuery odd = new OleDbQuery();
             Assert.IsTrue(odd.TestConnection(connectionString, true, false));
             Assert.IsNotNull(odd.SelectRow("SELECT f1 FROM TestTable;"));
             Assert.IsNotNull(odd.SelectRow("SELECT * FROM TestTable;", 0));
@@ -280,7 +303,7 @@ namespace XclassTests.Database
         [Test(Description = "Check that SelectRow() works correcly in case wrong results")]
         public void SelectRow_WrongUsing()
         {
-            OleDb odd = new OleDb();
+            OleDbQuery odd = new OleDbQuery();
             Assert.IsTrue(odd.TestConnection(connectionString, true, false));
             Assert.IsNull(odd.SelectRow("SELECT f1 FROM WrongTable;"));
             Assert.IsNull(odd.SelectRow("SELECT f1 FROM TestTable UNION ALL SELECT f2 FROM TestTable;"));
