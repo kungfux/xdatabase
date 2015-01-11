@@ -339,5 +339,57 @@ namespace Xclass.Database
                 }
             }
         }
+
+        /// <summary>
+        /// Perform several INSERT, UPDATE, DELETE etc queries in one transaction
+        /// </summary>
+        /// <param name="pQueryStatements">Query statements organized using SQLiteQueryStatement[]</param>
+        /// <returns>Number of total affected rows or -1 in case error occur</returns>
+        public int PerformTransaction(SQLiteQueryStatement[] pQueryStatements)
+        {
+            clearError();
+
+            int result = 0;
+            
+            try
+            {
+                if (connection.State == ConnectionState.Closed)
+                {
+                    connection.Open();
+                }
+                using (var command = new SQLiteCommand(connection))
+                {
+                    using (var transaction = connection.BeginTransaction())
+                    {
+                        for (int a = 0; a < pQueryStatements.Length; a++)
+                        {
+                            command.CommandText = pQueryStatements[a].QuerySql;
+                            if (pQueryStatements[a].QueryParameters != null)
+                            {
+                                foreach (SQLiteParameter arg in pQueryStatements[a].QueryParameters)
+                                {
+                                    command.Parameters.Add(arg);
+                                }
+                            }
+                            result += command.ExecuteNonQuery();
+                        }
+                        transaction.Commit();
+                        return result;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                registerError(ex.Message);
+                return -1;
+            }
+            finally
+            {
+                if (!KeepDatabaseOpened)
+                {
+                    connection.Close();
+                }
+            }
+        }
     }
 }

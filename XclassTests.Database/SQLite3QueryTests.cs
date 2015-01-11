@@ -198,7 +198,7 @@ namespace XclassTests.Database
             Assert.AreEqual(pExpectedValue, sqlite.SelectCell<T>(sqlSelectStatement));
         }
 
-        [Test(Description = "Check that SelectCell<> works correcly in case wrong sql statements")]
+        [Test(Description = "Check that SelectCell<> works correctly in case wrong sql statements")]
         [ExpectedException("System.FormatException")]
         public void SelectCell_WrongUsing1()
         {
@@ -207,7 +207,7 @@ namespace XclassTests.Database
             sqlite.SelectCell<bool>("SELECT  f1 FROM TestTable;");
         }
 
-        [Test(Description = "Check that SelectCell<> works correcly in case wrong sql statements")]
+        [Test(Description = "Check that SelectCell<> works correctly in case wrong sql statements")]
         [ExpectedException("System.Data.DataException")]
         public void SelectCell_WrongUsing2()
         {
@@ -216,7 +216,7 @@ namespace XclassTests.Database
             sqlite.SelectCell<bool>("SELECT f1,f2 FROM TestTable;");
         }
 
-        [Test(Description = "Check that SelectCell<> works correcly in case wrong sql statements")]
+        [Test(Description = "Check that SelectCell<> works correctly in case wrong sql statements")]
         [ExpectedException("System.Data.DataException")]
         public void SelectCell_WrongUsing3()
         {
@@ -225,7 +225,7 @@ namespace XclassTests.Database
             sqlite.SelectCell<bool>("SELECT f1,f2 FROM WrongTable;");
         }
 
-        [Test(Description = "Check that SelectCell<> with default return values defined works correcly")]
+        [Test(Description = "Check that SelectCell<> with default return values defined works correctly")]
         public void SelectCell_DefaultReturnValues()
         {
             SQLite3Query sqlite = new SQLite3Query();
@@ -234,7 +234,7 @@ namespace XclassTests.Database
             Assert.AreEqual(true, sqlite.SelectCell<bool>("SELECT f999 FROM TestTable;", true));
         }
 
-        [Test(Description = "Check that SelectColumn() works correcly")]
+        [Test(Description = "Check that SelectColumn() works correctly")]
         public void SelectColumn()
         {
             SQLite3Query sqlite = new SQLite3Query();
@@ -243,7 +243,7 @@ namespace XclassTests.Database
             Assert.IsNotNull(sqlite.SelectColumn("SELECT * FROM TestTable;", 0));
         }
 
-        [Test(Description = "Check that SelectColumn() works correcly in case wrong results")]
+        [Test(Description = "Check that SelectColumn() works correctly in case wrong results")]
         public void SelectColumn_WrongUsing()
         {
             SQLite3Query sqlite = new SQLite3Query();
@@ -252,7 +252,7 @@ namespace XclassTests.Database
             Assert.IsNull(sqlite.SelectColumn("SELECT f1,f2 FROM TestTable;"));
         }
 
-        [Test(Description = "Check that SelectRow() works correcly")]
+        [Test(Description = "Check that SelectRow() works correctly")]
         public void SelectRow()
         {
             SQLite3Query sqlite = new SQLite3Query();
@@ -261,13 +261,35 @@ namespace XclassTests.Database
             Assert.IsNotNull(sqlite.SelectRow("SELECT * FROM TestTable;", 0));
         }
 
-        [Test(Description = "Check that SelectRow() works correcly in case wrong results")]
+        [Test(Description = "Check that SelectRow() works correctly in case wrong results")]
         public void SelectRow_WrongUsing()
         {
             SQLite3Query sqlite = new SQLite3Query();
             Assert.IsTrue(sqlite.TestConnection(connectionString, true, false));
             Assert.IsNull(sqlite.SelectRow("SELECT f1 FROM WrongTable;"));
             Assert.IsNull(sqlite.SelectRow("SELECT f1 FROM TestTable UNION ALL SELECT f1 FROM TestTable;"));
+        }
+
+        [Test(Description = "Check that PerformTransaction works correctly")]
+        public void PerformTransaction()
+        {
+            SQLite3Query sqlite = new SQLite3Query();
+            Assert.IsTrue(sqlite.TestConnection(connectionString, true, false));
+            Assert.AreEqual(
+                sqlite.PerformTransaction(new SQLiteQueryStatement[] {
+                    new SQLiteQueryStatement() {
+                        QuerySql = "insert into test (f1) values (@v);",
+                        QueryParameters = new SQLiteParameter[] {
+                            new SQLiteParameter("@v", "transaction_test_1")
+                        }
+                    },
+                    new SQLiteQueryStatement() {
+                        QuerySql = "insert into test (f1) values (@v);",
+                        QueryParameters = new SQLiteParameter[] {
+                            new SQLiteParameter("@v", "transaction_test_1")
+                        }
+                    }
+                }), 2);
         }
     }
 }
