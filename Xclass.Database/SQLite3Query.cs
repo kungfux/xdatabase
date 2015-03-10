@@ -17,6 +17,8 @@
 using System;
 using System.Data;
 using System.Data.SQLite;
+using System.IO;
+using System.Drawing;
 
 namespace Xclass.Database
 {
@@ -389,6 +391,106 @@ namespace Xclass.Database
                 {
                     connection.Close();
                 }
+            }
+        }
+
+        /// <summary>
+        /// Save source of file into special cell in database
+        /// </summary>
+        /// <param name="pFileFullPath">Source file</param>
+        /// <param name="pQuerySql">Query statement</param>
+        /// <param name="pArgs">Query arguments</param>
+        /// <returns>True if success operation, false if not</returns>
+        public bool PutFile(string pFileFullPath, string pQuerySql, params SQLiteParameter[] pArgs)
+        {
+            clearError();
+
+            try
+            {
+                var fileStream = new FileStream(pFileFullPath, FileMode.Open, FileAccess.Read);
+                var fileBytes = new byte[fileStream.Length];
+                fileStream.Read(fileBytes, 0, (int)fileStream.Length);
+                fileStream.Close();
+                var argsExtended = new SQLiteParameter[pArgs.Length + 1];
+                var index = 0;
+                foreach (var p in pArgs)
+                {
+                    argsExtended.SetValue(p, index);
+                    index++;
+                }
+                argsExtended.SetValue(new SQLiteParameter("@file", fileBytes), index);
+                return ChangeData(pQuerySql, argsExtended) > 0;
+            }
+            catch (Exception ex)
+            {
+                registerError(ex.Message);
+                return false;
+            }
+        }
+        /// <summary>
+        /// Read data of cell and convert it to Image
+        /// </summary>
+        /// <param name="pQuerySql">Query statement</param>
+        /// <returns>Image</returns>
+        public Image GetImage(string pQuerySql, params SQLiteParameter[] pArgs)
+        {
+            clearError();
+
+            try
+            {
+                var fileBytes = SelectCell<byte[]>(pQuerySql, pArgs);
+                var memStream = new MemoryStream(fileBytes);
+                var image = Image.FromStream(memStream);
+                return image;
+            }
+            catch (Exception ex)
+            {
+                registerError(ex.Message);
+                return null;
+            }
+        }
+        /// <summary>
+        /// Read data of cell and convert it to byte[]
+        /// </summary>
+        /// <param name="pQuerySql">Query statement</param>
+        /// <returns>Bytes</returns>
+        public byte[] GetFile(string pQuerySql)
+        {
+            clearError();
+
+            try
+            {
+                var fileBytes = SelectCell<byte[]>(pQuerySql);
+                return fileBytes;
+            }
+            catch (Exception ex)
+            {
+                registerError(ex.Message);
+                return null;
+            }
+        }
+        /// <summary>
+        /// Read data of cell, convert it to byte[] and save on disc
+        /// </summary>
+        /// <param name="pOutputFile">Destination file</param>
+        /// <param name="pQuerySql">Query statement</param>
+        /// <returns>True if success operation. false if not</returns>
+        public bool GetAndSaveFile(string pOutputFile, string pQuerySql)
+        {
+            clearError();
+
+            try
+            {
+                var fileBytes = SelectCell<byte[]>(pQuerySql);
+                var newFileStream = new FileStream(pOutputFile, FileMode.CreateNew);
+                newFileStream.Write(fileBytes, 0, fileBytes.Length);
+                newFileStream.Close();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                registerError(ex.Message);
+                return false;
             }
         }
     }

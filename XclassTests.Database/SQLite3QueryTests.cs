@@ -18,6 +18,7 @@ using System;
 using NUnit.Framework;
 using Xclass.Database;
 using System.Data.SQLite;
+using System.Drawing;
 
 namespace XclassTests.Database
 {
@@ -290,6 +291,42 @@ namespace XclassTests.Database
                         }
                     }
                 }), 2);
+        }
+
+        [Test(Description = "Check that PutFile works correctly")]
+        public void PutFile()
+        {
+            SQLite3Query sqlite = new SQLite3Query();
+            Assert.IsTrue(sqlite.TestConnection(connectionString, true, false));
+            Assert.IsTrue(sqlite.PutFile(Environment.CurrentDirectory + "\\TestDataStorage\\test_image_picture-128.png", "insert into test (f1, f4) values (@f1, @file);",
+                new SQLiteParameter("@f1", "file_test")));
+        }
+
+        [Test(Description = "Check that PutFile can handle error in case file was not found")]
+        public void PutFileNotExists()
+        {
+            SQLite3Query sqlite = new SQLite3Query();
+            Assert.IsTrue(sqlite.TestConnection(connectionString, true, false));
+            Assert.IsFalse(sqlite.PutFile(Environment.CurrentDirectory + "\\TestDataStorage\\not_exists_file.png", "insert into test (f1, f4) values (@f1, @file);",
+                new SQLiteParameter("@f1", "file_test")));
+        }
+
+        [Test(Description = "Check that PutFile works correctly in case @file param was not specified")]
+        public void PutFileWrongUsage()
+        {
+            SQLite3Query sqlite = new SQLite3Query();
+            Assert.IsTrue(sqlite.TestConnection(connectionString, true, false));
+            Assert.IsFalse(sqlite.PutFile(Environment.CurrentDirectory + "\\TestDataStorage\\test_image_picture-128.png", "insert into test (f1, f4) values (@f1);",
+                new SQLiteParameter("@f1", "file_test")));
+        }
+
+        [Test(Description = "Check that GetImage works correctly")]
+        public void GetImage()
+        {
+            SQLite3Query sqlite = new SQLite3Query();
+            Assert.IsTrue(sqlite.TestConnection(connectionString, true, false));
+            Image image = sqlite.GetImage("select f4 from test where f1 = 'file_test' limit 1;");
+            Assert.IsNotNull(image);
         }
     }
 }
