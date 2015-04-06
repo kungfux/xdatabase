@@ -1,10 +1,10 @@
-/XclassTestsRunner/bin
-/XclassTestsRunner/obj
 obj
 bin
 *.suo
 *.user
-/Xclass.Database/System.Data.SQLite.dll
-/Xclass.Database/MySql.Data.dll
 /XclassTestsCoverage/*
 !XclassTestsCoverage/XclassCoverageTest.cmd
+packages/*
+!packages/NUnit/README.md
+!packages/SQLite/README.md
+!packages/MySql/README.md
