@@ -27,7 +27,7 @@ namespace XclassTests.Database
             "Data Source=TestDataStorage\\TestDatabase.sqlite;Version=3;UTF8Encoding=True;foreign keys=true;";
         private const XQuery.XDatabaseType dbType = XQuery.XDatabaseType.SQLite;
 
-        [SetUp]
+        [TestFixtureSetUp]
         public void Init()
         {
             string sqlCreateTestTable = string.Concat(
@@ -44,7 +44,7 @@ namespace XclassTests.Database
             x.ChangeData(sqlCreateTestTable);
         }
 
-        [TearDown]
+        [TestFixtureTearDown]
         public void Cleanup()
         {
             string sqlDropTestTable = "DROP TABLE test;";
@@ -104,13 +104,20 @@ namespace XclassTests.Database
 
         [Test]
         [Category("Transactions")]
-        public void StartTransactionSuccess()
+        public void ExecuteTransactionWith100InsertCommandsSuccess()
         {
+            const string sqlInsert = "INSERT INTO [test] (f1) VALUES ('asd')";
+
             XQuery x = new XQuery(dbType);
             x.ConnectionString = sqliteConnectionString;
             Assert.IsNull(x.ErrorMessage);
             Assert.IsTrue(x.StartTransaction());
             Assert.IsNull(x.ErrorMessage);
+            for (int a = 0; a < 100; a++)
+            {
+                Assert.AreEqual(1, x.PerformTransactionCommand(sqlInsert));
+            }
+            Assert.IsTrue(x.EndTransaction());
         }
 
         [Test]

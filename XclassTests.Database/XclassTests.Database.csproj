@@ -56,7 +56,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="XQueryTests.cs" />
+    <Compile Include="XQuerySQLiteTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Xclass.Database\Xclass.Database.csproj">

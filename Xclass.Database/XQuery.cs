@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Fuks Alexander. Contacts: kungfux2010@gmail.com
+ * Copyright 2015 Fuks Alexander. Contacts: kungfux2010@gmail.com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -55,6 +55,7 @@ namespace Xclass.Database
 
         // Database connection (can be SQLiteConnection, MySqlConnection or OleDbConnection)
         private DbConnection connection = null;
+        private DbTransaction transaction = null;
         private XDatabaseType databaseTypeChosen;
         private string lastOperationErrorMessage;
         private string databaseConnectionString = null;
@@ -257,6 +258,7 @@ namespace Xclass.Database
 
         #region Select/update/delete data
 
+        // Get new instance of appropriate DataAdapter
         private DbDataAdapter getDataAdapter()
         {
             switch (databaseTypeChosen)
@@ -267,11 +269,12 @@ namespace Xclass.Database
                     return new MySqlDataAdapter();
                 case XDatabaseType.MS_Access:
                     return new OleDbDataAdapter();
-                default:
-                    throw new Exception("XQuery internal error. Invalid DatabaseType passed.");
             }
+            // not all code paths return a value
+            return new SQLiteDataAdapter();
         }
 
+        // Get new instance of appropriate Command
         private DbCommand getCommand()
         {
             switch (databaseTypeChosen)
@@ -282,14 +285,17 @@ namespace Xclass.Database
                     return new MySqlCommand();
                 case XDatabaseType.MS_Access:
                     return new OleDbCommand();
-                default:
-                    throw new Exception("XQuery internal error. Invalid DatabaseType passed.");
             }
+            // not all code paths return a value
+            return new SQLiteCommand();
         }
 
         /// <summary>
         /// Perform SELECT query and return all results
         /// </summary>
+        /// <param name="pSqlQuery">Sql query statement</param>
+        /// <param name="pDataArgs">Query arguments</param>
+        /// <returns>System.Data.DataTable or null</returns>
         public DataTable SelectTable(string pSqlQuery, params IDataParameter[] pDataArgs)
         {
             clearError();
@@ -336,6 +342,205 @@ namespace Xclass.Database
             }
         }
 
+        /// <summary>
+        /// Perform SELECT query and return single row in case one row in results only
+        /// </summary>
+        /// <param name="pSqlQuery">Query statement</param>
+        /// <param name="pDataArgs">Query arguments</param>
+        /// <returns>System.Data.DataRow or null</returns>
+        public DataRow SelectRow(string pSqlQuery, params IDataParameter[] pDataArgs)
+        {
+            var table = SelectTable(pSqlQuery, pDataArgs);
+            return table != null && table.Rows.Count == 1 ? table.Rows[0] : null;
+        }
+
+        /// <summary>
+        /// Perform SELECT query and return single column in case one column in results only
+        /// </summary>
+        /// <param name="pSqlQuery">Query statement</param>
+        /// <param name="pDataArgs">Query arguments</param>
+        /// <returns>System.Data.DataRow or null</returns>
+        public DataColumn SelectColumn(string pSqlQuery, params IDataParameter[] pDataArgs)
+        {
+            var table = SelectTable(pSqlQuery, pDataArgs);
+            return table != null && table.Columns.Count == 1 ? table.Columns[0] : null;
+        }
+
+        /// <summary>
+        /// Perform SELECT query and return single cell in case one cell in results only
+        /// </summary>
+        /// <typeparam name="T">Expected data type</typeparam>
+        /// <param name="pSqlQuery">Query statement</param>
+        /// <param name="pDataArgs">Query arguments</param>
+        /// <returns>System.Data.DataRow or null</returns>
+        public T SelectCell<T>(string pSqlQuery, params IDataParameter[] pDataArgs)
+        {
+            var table = SelectTable(pSqlQuery, pDataArgs);
+            if (table != null && 
+                table.Rows.Count == 1 && 
+                table.Columns.Count == 1 && 
+                table.Rows[0].ItemArray[0].GetType() == typeof(T))
+            {
+                return (T)table.Rows[0].ItemArray[0];
+            }
+            else
+            {
+                if (table != null && 
+                    table.Rows.Count == 1 && 
+                    table.Columns.Count == 1)
+                {
+                    throw new FormatException("Type of cell is not equals to specified type of T. Type of cell is equals to " +
+                    table.Rows[0].ItemArray[0].GetType().ToString());
+                }
+                else if (table != null && 
+                    (table.Rows.Count != 1 || 
+                    table.Columns.Count != 1))
+                {
+                    throw new DataException(
+                        string.Format("Expected 1x1 table but returned {0}x{1}", table.Rows.Count, table.Columns.Count));
+                }
+                else
+                {
+                    throw new DataException("Nothing to select, empty results.");
+                }
+            }
+        }
+
+        /// <summary>
+        /// Perform SELECT query and return single cell in case one cell in results only
+        /// </summary>
+        /// <typeparam name="T">Expected data type</typeparam>
+        /// <param name="pSqlQuery">Query statement</param>
+        /// <param name="pDefaultValue">Default value that will be returned in case of error</param>
+        /// <param name="pDataArgs">Query arguments</param>
+        /// <returns>System.Data.DataRow or null</returns>
+        public T SelectCell<T>(string pSqlQuery, T pDefaultValue = default(T), params IDataParameter[] pDataArgs)
+        {
+            var table = SelectTable(pSqlQuery, pDataArgs);
+            if (table != null && table.Rows.Count == 1 && table.Columns.Count == 1 && table.Rows[0].ItemArray[0].GetType() == typeof(T))
+            {
+                return (T)table.Rows[0].ItemArray[0];
+            }
+            else
+            {
+                return pDefaultValue;
+            }
+        }
+
+        /// <summary>
+        /// Perform INSERT, UPDATE, DELETE etc queries
+        /// </summary>
+        /// <param name="pSqlQuery">Query statement</param>
+        /// <param name="pDataArgs">Query arguments</param>
+        /// <returns>Number of affected rows or -1 in case error occur</returns>
+        public int ChangeData(string pSqlQuery, params IDataParameter[] pDataArgs)
+        {
+            clearError();
+            try
+            {
+                if (!IsActiveConnection)
+                {
+                    openConnection();
+                }
+                using (var command = getCommand())
+                {
+                    command.Connection = connection;
+                    command.CommandText = pSqlQuery;
+                    command.CommandTimeout = Timeout;
+
+                    if (pDataArgs != null)
+                    {
+                        foreach (var arg in pDataArgs)
+                        {
+                            command.Parameters.Add(arg);
+                        }
+                    }
+                    return command.ExecuteNonQuery();
+                }
+            }
+            catch (Exception ex)
+            {
+                registerError(ex.Message);
+                return -1;
+            }
+            finally
+            {
+                if (!KeepDatabaseOpened)
+                {
+                    closeConnection();
+                }
+            }
+        }
+
+        public bool StartTransaction()
+        {
+            clearError();
+            try
+            {
+                if (!IsActiveConnection)
+                {
+                    openConnection();
+                }
+                transaction = connection.BeginTransaction();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                registerError(ex.Message);
+                return false;
+            }
+        }
+
+        public bool EndTransaction()
+        {
+            clearError();
+            try
+            {
+                transaction.Commit();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                registerError(ex.Message);
+                return false;
+            }
+            finally
+            {
+                if (!KeepDatabaseOpened)
+                {
+                    closeConnection();
+                }
+            }
+        }
+
+        public int PerformTransactionCommand(string pSqlQuery, params IDataParameter[] pDataArgs)
+        {
+            clearError();
+            try
+            {
+                using (var command = getCommand())
+                {
+                    command.Connection = connection;
+                    command.CommandText = pSqlQuery;
+                    command.CommandTimeout = Timeout;
+
+                    if (pDataArgs != null)
+                    {
+                        foreach (var arg in pDataArgs)
+                        {
+                            command.Parameters.Add(arg);
+                        }
+                    }
+
+                    return command.ExecuteNonQuery();
+                }
+            }
+            catch (Exception ex)
+            {
+                registerError(ex.Message);
+                return -1;
+            }
+        }
         #endregion
     }
 }
