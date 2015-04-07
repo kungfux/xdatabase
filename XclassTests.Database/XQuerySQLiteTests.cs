@@ -217,6 +217,24 @@ namespace XclassTests.Database
         }
 
         [Test]
+        [Category("Negative")]
+        public void TestInsertBinaryWhenTransactionIsStarted()
+        {
+            XQuery x = new XQuery(dbType);
+            x.ConnectionString = sqliteConnectionString;
+            x.KeepDatabaseOpened = true;
+            Assert.IsTrue(x.StartTransaction());
+            Assert.IsNull(x.ErrorMessage);
+            //
+            Assert.IsFalse(x.PutFile(Environment.CurrentDirectory + "\\TestDataStorage\\test_image_picture-128.png",
+                "insert into test (f4) values (@file);", "@file"));
+            Assert.IsNotNull(x.ErrorMessage);
+            //
+            Assert.IsTrue(x.EndTransaction());
+            Assert.IsNull(x.ErrorMessage);
+        }
+
+        [Test]
         [Category("Positive")]
         public void TestPutFile()
         {
@@ -225,7 +243,7 @@ namespace XclassTests.Database
             Assert.IsNull(x.ErrorMessage);
 
             Assert.IsTrue(x.PutFile(Environment.CurrentDirectory + "\\TestDataStorage\\test_image_picture-128.png", 
-                "insert into test (f4) values (@file);"));
+                "insert into test (f4) values (@file);", "@file"));
         }
 
         [Test]
@@ -237,7 +255,7 @@ namespace XclassTests.Database
             Assert.IsNull(x.ErrorMessage);
 
             Assert.IsTrue(x.PutFile(Environment.CurrentDirectory + "\\TestDataStorage\\test_image_picture-128.png",
-                "insert into test (f4) values (@file);"));
+                "insert into test (f4) values (@file);", "@file"));
 
             Image i = x.GetBinaryAsImage("select f4 from test where f4 is not null");
             Assert.NotNull(i);

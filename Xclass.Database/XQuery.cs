@@ -153,6 +153,17 @@ namespace Xclass.Database
         }
 
         /// <summary>
+        /// Is library in transaction mode
+        /// </summary>
+        public bool IsTransactionMode
+        {
+            get
+            {
+                return transaction != null;
+            }
+        }
+
+        /// <summary>
         /// Currently used database type: XDatabaseType
         /// </summary>
         public XDatabaseType ActiveDatabaseType
@@ -234,7 +245,7 @@ namespace Xclass.Database
         // Close active connection
         private void closeConnection()
         {
-            if (connection != null)
+            if (connection != null && !IsTransactionMode)
             {
                 connection.Close();
             }
@@ -530,6 +541,28 @@ namespace Xclass.Database
             }
         }
 
+        public bool RollbackTransaction()
+        {
+            clearError();
+            try
+            {
+                transaction.Rollback();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                registerError(ex.Message);
+                return false;
+            }
+            finally
+            {
+                if (!KeepDatabaseOpened)
+                {
+                    closeConnection();
+                }
+            }
+        }
+
         public int PerformTransactionCommand(string pSqlQuery, params IDataParameter[] pDataArgs)
         {
             clearError();
@@ -562,27 +595,17 @@ namespace Xclass.Database
 
         #region Binary data
 
-        public bool PutBinary(byte[] pBinaryData, string pSqlQuery, params IDataParameter[] pDataArgs)
+        public bool PutBinary(byte[] pBinaryData, string pSqlQuery, string pBinaryArgumentName)
         {
             clearError();
 
             try
             {
-                var argsExtended = new SQLiteParameter[pDataArgs.Length + 1];
-                var index = 0;
-
-                foreach (var p in pDataArgs)
-                {
-                    argsExtended.SetValue(p, index);
-                    index++;
-                }
-
                 var parameter = getParameter();
-                parameter.ParameterName = "@file";
+                parameter.ParameterName = pBinaryArgumentName;
                 parameter.Value = pBinaryData;
-                argsExtended.SetValue(parameter, index);
 
-                return ChangeData(pSqlQuery, argsExtended) > 0;
+                return ChangeData(pSqlQuery, parameter) > 0;
             }
             catch (Exception ex)
             {
@@ -598,7 +621,7 @@ namespace Xclass.Database
         /// <param name="pSqlQuery">Query statement</param>
         /// <param name="pDataArgs">Query arguments</param>
         /// <returns>True if success operation, false if not</returns>
-        public bool PutFile(string pFromFile, string pSqlQuery, params IDataParameter[] pDataArgs)
+        public bool PutFile(string pFromFile, string pSqlQuery, string pBinaryArgumentName)
         {
             clearError();
 
@@ -609,7 +632,7 @@ namespace Xclass.Database
                 fileStream.Read(fileBytes, 0, (int)fileStream.Length);
                 fileStream.Close();
 
-                return PutBinary(fileBytes, pSqlQuery, pDataArgs);
+                return PutBinary(fileBytes, pSqlQuery, pBinaryArgumentName);
             }
             catch (Exception ex)
             {
