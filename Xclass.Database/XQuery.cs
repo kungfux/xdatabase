@@ -20,6 +20,8 @@ using System.Data;
 using System.Data.Common;
 using System.Data.OleDb;
 using System.Data.SQLite;
+using System.Drawing;
+using System.IO;
 
 namespace Xclass.Database
 {
@@ -290,6 +292,21 @@ namespace Xclass.Database
             return new SQLiteCommand();
         }
 
+        private IDataParameter getParameter()
+        {
+            switch (databaseTypeChosen)
+            {
+                case XDatabaseType.SQLite:
+                    return new SQLiteParameter();
+                case XDatabaseType.MySQL:
+                    return new MySqlParameter();
+                case XDatabaseType.MS_Access:
+                    return new OleDbParameter();
+            }
+            // not all code paths return a value
+            return new SQLiteParameter();
+        }
+
         /// <summary>
         /// Perform SELECT query and return all results
         /// </summary>
@@ -539,6 +556,134 @@ namespace Xclass.Database
             {
                 registerError(ex.Message);
                 return -1;
+            }
+        }
+        #endregion
+
+        #region Binary data
+
+        public bool PutBinary(byte[] pBinaryData, string pSqlQuery, params IDataParameter[] pDataArgs)
+        {
+            clearError();
+
+            try
+            {
+                var argsExtended = new SQLiteParameter[pDataArgs.Length + 1];
+                var index = 0;
+
+                foreach (var p in pDataArgs)
+                {
+                    argsExtended.SetValue(p, index);
+                    index++;
+                }
+
+                var parameter = getParameter();
+                parameter.ParameterName = "@file";
+                parameter.Value = pBinaryData;
+                argsExtended.SetValue(parameter, index);
+
+                return ChangeData(pSqlQuery, argsExtended) > 0;
+            }
+            catch (Exception ex)
+            {
+                registerError(ex.Message);
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Save source of file into special cell in database
+        /// </summary>
+        /// <param name="pFromFile">Source file</param>
+        /// <param name="pSqlQuery">Query statement</param>
+        /// <param name="pDataArgs">Query arguments</param>
+        /// <returns>True if success operation, false if not</returns>
+        public bool PutFile(string pFromFile, string pSqlQuery, params IDataParameter[] pDataArgs)
+        {
+            clearError();
+
+            try
+            {
+                var fileStream = new FileStream(pFromFile, FileMode.Open, FileAccess.Read);
+                var fileBytes = new byte[fileStream.Length];
+                fileStream.Read(fileBytes, 0, (int)fileStream.Length);
+                fileStream.Close();
+
+                return PutBinary(fileBytes, pSqlQuery, pDataArgs);
+            }
+            catch (Exception ex)
+            {
+                registerError(ex.Message);
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Read data of cell and convert it to byte[]
+        /// </summary>
+        /// <param name="pSqlQuery">Query statement</param>
+        /// <returns>Bytes or null</returns>
+        public byte[] GetBinaryData(string pSqlQuery, params IDataParameter[] pDataArgs)
+        {
+            clearError();
+
+            try
+            {
+                var fileBytes = SelectCell<byte[]>(pSqlQuery, pDataArgs);
+                return fileBytes;
+            }
+            catch (Exception ex)
+            {
+                registerError(ex.Message);
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// Read data of cell and convert it to Image
+        /// </summary>
+        /// <param name="pSqlQuery">Query statement</param>
+        /// <returns>Image</returns>
+        public Image GetBinaryAsImage(string pSqlQuery, params IDataParameter[] pDataArgs)
+        {
+            clearError();
+
+            try
+            {
+                var fileBytes = SelectCell<byte[]>(pSqlQuery, pDataArgs);
+                var memStream = new MemoryStream(fileBytes);
+                var image = Image.FromStream(memStream);
+                return image;
+            }
+            catch (Exception ex)
+            {
+                registerError(ex.Message);
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// Read data of cell, convert it to byte[] and save on disk
+        /// </summary>
+        /// <param name="pOutputFile">Destination file</param>
+        /// <param name="pSqlQuery">Query statement</param>
+        /// <returns>True if success operation. false if not</returns>
+        public bool GetBinaryAndSaveToFile(string pOutputFile, string pSqlQuery)
+        {
+            clearError();
+
+            try
+            {
+                var fileBytes = SelectCell<byte[]>(pSqlQuery);
+                var newFileStream = new FileStream(pOutputFile, FileMode.CreateNew);
+                newFileStream.Write(fileBytes, 0, fileBytes.Length);
+                newFileStream.Close();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                registerError(ex.Message);
+                return false;
             }
         }
         #endregion

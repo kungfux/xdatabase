@@ -51,11 +51,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="MySqlQuery.cs" />
-    <Compile Include="OleDbQuery.cs" />
-    <Compile Include="SQLite3Query.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SQLiteQueryStatement.cs" />
     <Compile Include="XQuery.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
