@@ -145,7 +145,7 @@ namespace XclassTests.Database
             Assert.IsNull(x.ErrorMessage);
             for (int a = 0; a < 5; a++)
             {
-                Assert.AreEqual(1, x.ExecuteTransaction(sqlInsert));
+                Assert.AreEqual(1, x.ChangeData(sqlInsert));
             }
             Assert.IsTrue(x.CommitTransaction());
         }
@@ -169,7 +169,7 @@ namespace XclassTests.Database
             Assert.IsNull(x.ErrorMessage);
             for (int a = 0; a < 100; a++)
             {
-                Assert.AreEqual(1, x.ExecuteTransaction(sqlInsert));
+                Assert.AreEqual(1, x.ChangeData(sqlInsert));
             }
             Assert.IsTrue(x.CommitTransaction());
 
@@ -212,26 +212,7 @@ namespace XclassTests.Database
         }
 
         [Test]
-        [Category("Negative")]
-        public void TestTransactionFailsIfWasNotStarted()
-        {
-            const string sqlInsert = "INSERT INTO [test] (f1) VALUES ('asd')";
-
-            XQuery x = new XQuery(dbType);
-            x.ConnectionString = sqliteConnectionString;
-            Assert.IsNull(x.ErrorMessage);
-            // perform transaction
-            for (int a = 0; a < 5; a++)
-            {
-                Assert.AreEqual(-1, x.ExecuteTransaction(sqlInsert));
-                Assert.IsNotNull(x.ErrorMessage);
-            }
-            Assert.IsFalse(x.CommitTransaction());
-            Assert.IsNotNull(x.ErrorMessage);
-        }
-
-        [Test]
-        [Category("Negative")]
+        [Category("Positive")]
         public void TestInsertBinaryWhenTransactionIsStarted()
         {
             XQuery x = new XQuery(dbType);
@@ -240,9 +221,9 @@ namespace XclassTests.Database
             Assert.IsTrue(x.BeginTransaction());
             Assert.IsNull(x.ErrorMessage);
             //
-            Assert.IsFalse(x.PutFile(Environment.CurrentDirectory + "\\TestDataStorage\\test_image_picture-128.png",
+            Assert.IsTrue(x.PutFile(Environment.CurrentDirectory + "\\TestDataStorage\\test_image_picture-128.png",
                 "insert into test (f4) values (@file);", "@file"));
-            Assert.IsNotNull(x.ErrorMessage);
+            Assert.IsNull(x.ErrorMessage);
             //
             Assert.IsTrue(x.CommitTransaction());
             Assert.IsNull(x.ErrorMessage);

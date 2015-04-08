@@ -98,40 +98,5 @@ namespace Xclass.Database
                 }
             }
         }
-
-        /// <summary>
-        /// Execute command while transaction
-        /// </summary>
-        /// <param name="pSqlQuery"></param>
-        /// <param name="pDataArgs"></param>
-        /// <returns></returns>
-        public int ExecuteTransaction(string pSqlQuery, params IDataParameter[] pDataArgs)
-        {
-            clearError();
-            try
-            {
-                using (var command = getCommand())
-                {
-                    command.Connection = connection;
-                    command.CommandText = pSqlQuery;
-                    command.CommandTimeout = Timeout;
-
-                    if (pDataArgs != null)
-                    {
-                        foreach (var arg in pDataArgs)
-                        {
-                            command.Parameters.Add(arg);
-                        }
-                    }
-
-                    return command.ExecuteNonQuery();
-                }
-            }
-            catch (Exception ex)
-            {
-                registerError(ex.Message);
-                return -1;
-            }
-        }
     }
 }
