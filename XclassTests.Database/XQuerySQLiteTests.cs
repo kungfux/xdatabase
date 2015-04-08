@@ -141,13 +141,13 @@ namespace XclassTests.Database
             Assert.IsNull(x.ErrorMessage);
 
             // perform transaction
-            Assert.IsTrue(x.StartTransaction());
+            Assert.IsTrue(x.BeginTransaction());
             Assert.IsNull(x.ErrorMessage);
             for (int a = 0; a < 5; a++)
             {
                 Assert.AreEqual(1, x.PerformTransactionCommand(sqlInsert));
             }
-            Assert.IsTrue(x.EndTransaction());
+            Assert.IsTrue(x.CommitTransaction());
         }
 
         [Test]
@@ -165,16 +165,28 @@ namespace XclassTests.Database
             rowsBeforeTransaction = x.SelectCell<Int64>("select count(*) from test;");
 
             // perform transaction
-            Assert.IsTrue(x.StartTransaction());
+            Assert.IsTrue(x.BeginTransaction());
             Assert.IsNull(x.ErrorMessage);
             for (int a = 0; a < 100; a++)
             {
                 Assert.AreEqual(1, x.PerformTransactionCommand(sqlInsert));
             }
-            Assert.IsTrue(x.EndTransaction());
+            Assert.IsTrue(x.CommitTransaction());
 
             // check that count equals to before + 100
             Assert.AreEqual(rowsBeforeTransaction + 100, x.SelectCell<Int64>("select count(*) from test;"));
+        }
+
+        [Test]
+        [Category("Positive")]
+        public void TestArgumentsCanBePassed()
+        {
+            XQuery x = new XQuery(dbType);
+            x.ConnectionString = sqliteConnectionString;
+            Assert.IsNull(x.ErrorMessage);
+            System.Data.DataTable t = 
+                x.SelectTable("select * from testtable where f1 = @f1", new XQueryParameter("@f1", "text1"));
+            Assert.AreEqual(1, t.Rows.Count);
         }
 
         [Test]
@@ -182,7 +194,7 @@ namespace XclassTests.Database
         public void TestTransactionFailsIfNoConnectionSpecified()
         {
             XQuery x = new XQuery(dbType);
-            Assert.IsFalse(x.StartTransaction());
+            Assert.IsFalse(x.BeginTransaction());
             Assert.IsNotNull(x.ErrorMessage);
         }
 
@@ -193,7 +205,7 @@ namespace XclassTests.Database
             XQuery x = new XQuery(dbType);
             x.ConnectionString = sqliteConnectionString;
             Assert.IsNull(x.ErrorMessage);
-            Assert.IsFalse(x.EndTransaction());
+            Assert.IsFalse(x.CommitTransaction());
             Assert.IsNotNull(x.ErrorMessage);
         }
 
@@ -212,25 +224,25 @@ namespace XclassTests.Database
                 Assert.AreEqual(-1, x.PerformTransactionCommand(sqlInsert));
                 Assert.IsNotNull(x.ErrorMessage);
             }
-            Assert.IsFalse(x.EndTransaction());
+            Assert.IsFalse(x.CommitTransaction());
             Assert.IsNotNull(x.ErrorMessage);
         }
 
-        [Test]
+        //[Test]
         [Category("Negative")]
         public void TestInsertBinaryWhenTransactionIsStarted()
         {
             XQuery x = new XQuery(dbType);
             x.ConnectionString = sqliteConnectionString;
             x.KeepDatabaseOpened = true;
-            Assert.IsTrue(x.StartTransaction());
+            Assert.IsTrue(x.BeginTransaction());
             Assert.IsNull(x.ErrorMessage);
             //
             Assert.IsFalse(x.PutFile(Environment.CurrentDirectory + "\\TestDataStorage\\test_image_picture-128.png",
                 "insert into test (f4) values (@file);", "@file"));
             Assert.IsNotNull(x.ErrorMessage);
             //
-            Assert.IsTrue(x.EndTransaction());
+            Assert.IsTrue(x.CommitTransaction());
             Assert.IsNull(x.ErrorMessage);
         }
 

@@ -14,14 +14,9 @@
  * limitations under the License.
  */
 
-using MySql.Data.MySqlClient;
 using System;
 using System.Data;
 using System.Data.Common;
-using System.Data.OleDb;
-using System.Data.SQLite;
-using System.Drawing;
-using System.IO;
 
 namespace Xclass.Database
 {
@@ -39,15 +34,8 @@ namespace Xclass.Database
     ///  1. In case you're going to use XQuery to interact with Microsoft Access Database
     ///     you should compile XQuery class library for x86 only!
     /// </summary>
-    public class XQuery
+    public partial class XQuery
     {
-        public enum XDatabaseType
-        {
-            SQLite,
-            MySQL,
-            MS_Access
-        }
-
         public XQuery(XDatabaseType pDatabaseType)
         {
             databaseTypeChosen = pDatabaseType;
@@ -57,7 +45,6 @@ namespace Xclass.Database
 
         // Database connection (can be SQLiteConnection, MySqlConnection or OleDbConnection)
         private DbConnection connection = null;
-        private DbTransaction transaction = null;
         private XDatabaseType databaseTypeChosen;
         private string lastOperationErrorMessage;
         private string databaseConnectionString = null;
@@ -176,31 +163,6 @@ namespace Xclass.Database
 
         #endregion
 
-
-        #region Error reporting
-
-        public delegate void ErrorEventHandler(string pErrorMessage);
-        public event ErrorEventHandler OperationError;
-
-        // Register error
-        private void registerError(string pMessage)
-        {
-            lastOperationErrorMessage = pMessage;
-            // Call event if somebody use it
-            if (OperationError != null)
-            {
-                OperationError(lastOperationErrorMessage);
-            }
-        }
-
-        // Clear error message before new operation begins
-        private void clearError()
-        {
-            lastOperationErrorMessage = null;
-        }
-
-        #endregion
-
         #region Test connection
 
         // Check is connection can be established
@@ -251,72 +213,9 @@ namespace Xclass.Database
             }
         }
 
-        // Get new connection instance based on XDatabaseType
-        private DbConnection getConnectionInstance()
-        {
-            switch (databaseTypeChosen)
-            {
-                case XDatabaseType.SQLite:
-                    return new SQLiteConnection();
-                case XDatabaseType.MySQL:
-                    return new MySqlConnection();
-                case XDatabaseType.MS_Access:
-                    return new OleDbConnection();
-                default:
-                    throw new Exception("XQuery internal error. Invalid DatabaseType passed.");
-            }
-        }
-
         #endregion
 
         #region Select/update/delete data
-
-        // Get new instance of appropriate DataAdapter
-        private DbDataAdapter getDataAdapter()
-        {
-            switch (databaseTypeChosen)
-            {
-                case XDatabaseType.SQLite:
-                    return new SQLiteDataAdapter();
-                case XDatabaseType.MySQL:
-                    return new MySqlDataAdapter();
-                case XDatabaseType.MS_Access:
-                    return new OleDbDataAdapter();
-            }
-            // not all code paths return a value
-            return new SQLiteDataAdapter();
-        }
-
-        // Get new instance of appropriate Command
-        private DbCommand getCommand()
-        {
-            switch (databaseTypeChosen)
-            {
-                case XDatabaseType.SQLite:
-                    return new SQLiteCommand();
-                case XDatabaseType.MySQL:
-                    return new MySqlCommand();
-                case XDatabaseType.MS_Access:
-                    return new OleDbCommand();
-            }
-            // not all code paths return a value
-            return new SQLiteCommand();
-        }
-
-        private IDataParameter getParameter()
-        {
-            switch (databaseTypeChosen)
-            {
-                case XDatabaseType.SQLite:
-                    return new SQLiteParameter();
-                case XDatabaseType.MySQL:
-                    return new MySqlParameter();
-                case XDatabaseType.MS_Access:
-                    return new OleDbParameter();
-            }
-            // not all code paths return a value
-            return new SQLiteParameter();
-        }
 
         /// <summary>
         /// Perform SELECT query and return all results
@@ -324,7 +223,7 @@ namespace Xclass.Database
         /// <param name="pSqlQuery">Sql query statement</param>
         /// <param name="pDataArgs">Query arguments</param>
         /// <returns>System.Data.DataTable or null</returns>
-        public DataTable SelectTable(string pSqlQuery, params IDataParameter[] pDataArgs)
+        public DataTable SelectTable(string pSqlQuery, params XQueryParameter[] pDataArgs)
         {
             clearError();
             var tableResults = new DataTable();
@@ -376,7 +275,7 @@ namespace Xclass.Database
         /// <param name="pSqlQuery">Query statement</param>
         /// <param name="pDataArgs">Query arguments</param>
         /// <returns>System.Data.DataRow or null</returns>
-        public DataRow SelectRow(string pSqlQuery, params IDataParameter[] pDataArgs)
+        public DataRow SelectRow(string pSqlQuery, params XQueryParameter[] pDataArgs)
         {
             var table = SelectTable(pSqlQuery, pDataArgs);
             return table != null && table.Rows.Count == 1 ? table.Rows[0] : null;
@@ -388,7 +287,7 @@ namespace Xclass.Database
         /// <param name="pSqlQuery">Query statement</param>
         /// <param name="pDataArgs">Query arguments</param>
         /// <returns>System.Data.DataRow or null</returns>
-        public DataColumn SelectColumn(string pSqlQuery, params IDataParameter[] pDataArgs)
+        public DataColumn SelectColumn(string pSqlQuery, params XQueryParameter[] pDataArgs)
         {
             var table = SelectTable(pSqlQuery, pDataArgs);
             return table != null && table.Columns.Count == 1 ? table.Columns[0] : null;
@@ -401,7 +300,7 @@ namespace Xclass.Database
         /// <param name="pSqlQuery">Query statement</param>
         /// <param name="pDataArgs">Query arguments</param>
         /// <returns>System.Data.DataRow or null</returns>
-        public T SelectCell<T>(string pSqlQuery, params IDataParameter[] pDataArgs)
+        public T SelectCell<T>(string pSqlQuery, params XQueryParameter[] pDataArgs)
         {
             var table = SelectTable(pSqlQuery, pDataArgs);
             if (table != null && 
@@ -442,7 +341,7 @@ namespace Xclass.Database
         /// <param name="pDefaultValue">Default value that will be returned in case of error</param>
         /// <param name="pDataArgs">Query arguments</param>
         /// <returns>System.Data.DataRow or null</returns>
-        public T SelectCell<T>(string pSqlQuery, T pDefaultValue = default(T), params IDataParameter[] pDataArgs)
+        public T SelectCell<T>(string pSqlQuery, T pDefaultValue = default(T), params XQueryParameter[] pDataArgs)
         {
             var table = SelectTable(pSqlQuery, pDataArgs);
             if (table != null && table.Rows.Count == 1 && table.Columns.Count == 1 && table.Rows[0].ItemArray[0].GetType() == typeof(T))
@@ -461,7 +360,7 @@ namespace Xclass.Database
         /// <param name="pSqlQuery">Query statement</param>
         /// <param name="pDataArgs">Query arguments</param>
         /// <returns>Number of affected rows or -1 in case error occur</returns>
-        public int ChangeData(string pSqlQuery, params IDataParameter[] pDataArgs)
+        public int ChangeData(string pSqlQuery, params XQueryParameter[] pDataArgs)
         {
             clearError();
             try
@@ -500,215 +399,6 @@ namespace Xclass.Database
             }
         }
 
-        public bool StartTransaction()
-        {
-            clearError();
-            try
-            {
-                if (!IsActiveConnection)
-                {
-                    openConnection();
-                }
-                transaction = connection.BeginTransaction();
-                return true;
-            }
-            catch (Exception ex)
-            {
-                registerError(ex.Message);
-                return false;
-            }
-        }
-
-        public bool EndTransaction()
-        {
-            clearError();
-            try
-            {
-                transaction.Commit();
-                return true;
-            }
-            catch (Exception ex)
-            {
-                registerError(ex.Message);
-                return false;
-            }
-            finally
-            {
-                if (!KeepDatabaseOpened)
-                {
-                    closeConnection();
-                }
-            }
-        }
-
-        public bool RollbackTransaction()
-        {
-            clearError();
-            try
-            {
-                transaction.Rollback();
-                return true;
-            }
-            catch (Exception ex)
-            {
-                registerError(ex.Message);
-                return false;
-            }
-            finally
-            {
-                if (!KeepDatabaseOpened)
-                {
-                    closeConnection();
-                }
-            }
-        }
-
-        public int PerformTransactionCommand(string pSqlQuery, params IDataParameter[] pDataArgs)
-        {
-            clearError();
-            try
-            {
-                using (var command = getCommand())
-                {
-                    command.Connection = connection;
-                    command.CommandText = pSqlQuery;
-                    command.CommandTimeout = Timeout;
-
-                    if (pDataArgs != null)
-                    {
-                        foreach (var arg in pDataArgs)
-                        {
-                            command.Parameters.Add(arg);
-                        }
-                    }
-
-                    return command.ExecuteNonQuery();
-                }
-            }
-            catch (Exception ex)
-            {
-                registerError(ex.Message);
-                return -1;
-            }
-        }
-        #endregion
-
-        #region Binary data
-
-        public bool PutBinary(byte[] pBinaryData, string pSqlQuery, string pBinaryArgumentName)
-        {
-            clearError();
-
-            try
-            {
-                var parameter = getParameter();
-                parameter.ParameterName = pBinaryArgumentName;
-                parameter.Value = pBinaryData;
-
-                return ChangeData(pSqlQuery, parameter) > 0;
-            }
-            catch (Exception ex)
-            {
-                registerError(ex.Message);
-                return false;
-            }
-        }
-
-        /// <summary>
-        /// Save source of file into special cell in database
-        /// </summary>
-        /// <param name="pFromFile">Source file</param>
-        /// <param name="pSqlQuery">Query statement</param>
-        /// <param name="pDataArgs">Query arguments</param>
-        /// <returns>True if success operation, false if not</returns>
-        public bool PutFile(string pFromFile, string pSqlQuery, string pBinaryArgumentName)
-        {
-            clearError();
-
-            try
-            {
-                var fileStream = new FileStream(pFromFile, FileMode.Open, FileAccess.Read);
-                var fileBytes = new byte[fileStream.Length];
-                fileStream.Read(fileBytes, 0, (int)fileStream.Length);
-                fileStream.Close();
-
-                return PutBinary(fileBytes, pSqlQuery, pBinaryArgumentName);
-            }
-            catch (Exception ex)
-            {
-                registerError(ex.Message);
-                return false;
-            }
-        }
-
-        /// <summary>
-        /// Read data of cell and convert it to byte[]
-        /// </summary>
-        /// <param name="pSqlQuery">Query statement</param>
-        /// <returns>Bytes or null</returns>
-        public byte[] GetBinaryData(string pSqlQuery, params IDataParameter[] pDataArgs)
-        {
-            clearError();
-
-            try
-            {
-                var fileBytes = SelectCell<byte[]>(pSqlQuery, pDataArgs);
-                return fileBytes;
-            }
-            catch (Exception ex)
-            {
-                registerError(ex.Message);
-                return null;
-            }
-        }
-
-        /// <summary>
-        /// Read data of cell and convert it to Image
-        /// </summary>
-        /// <param name="pSqlQuery">Query statement</param>
-        /// <returns>Image</returns>
-        public Image GetBinaryAsImage(string pSqlQuery, params IDataParameter[] pDataArgs)
-        {
-            clearError();
-
-            try
-            {
-                var fileBytes = SelectCell<byte[]>(pSqlQuery, pDataArgs);
-                var memStream = new MemoryStream(fileBytes);
-                var image = Image.FromStream(memStream);
-                return image;
-            }
-            catch (Exception ex)
-            {
-                registerError(ex.Message);
-                return null;
-            }
-        }
-
-        /// <summary>
-        /// Read data of cell, convert it to byte[] and save on disk
-        /// </summary>
-        /// <param name="pOutputFile">Destination file</param>
-        /// <param name="pSqlQuery">Query statement</param>
-        /// <returns>True if success operation. false if not</returns>
-        public bool GetBinaryAndSaveToFile(string pOutputFile, string pSqlQuery)
-        {
-            clearError();
-
-            try
-            {
-                var fileBytes = SelectCell<byte[]>(pSqlQuery);
-                var newFileStream = new FileStream(pOutputFile, FileMode.CreateNew);
-                newFileStream.Write(fileBytes, 0, fileBytes.Length);
-                newFileStream.Close();
-                return true;
-            }
-            catch (Exception ex)
-            {
-                registerError(ex.Message);
-                return false;
-            }
-        }
         #endregion
     }
 }
