@@ -145,7 +145,7 @@ namespace XclassTests.Database
             Assert.IsNull(x.ErrorMessage);
             for (int a = 0; a < 5; a++)
             {
-                Assert.AreEqual(1, x.PerformTransactionCommand(sqlInsert));
+                Assert.AreEqual(1, x.ExecuteTransaction(sqlInsert));
             }
             Assert.IsTrue(x.CommitTransaction());
         }
@@ -169,7 +169,7 @@ namespace XclassTests.Database
             Assert.IsNull(x.ErrorMessage);
             for (int a = 0; a < 100; a++)
             {
-                Assert.AreEqual(1, x.PerformTransactionCommand(sqlInsert));
+                Assert.AreEqual(1, x.ExecuteTransaction(sqlInsert));
             }
             Assert.IsTrue(x.CommitTransaction());
 
@@ -184,8 +184,10 @@ namespace XclassTests.Database
             XQuery x = new XQuery(dbType);
             x.ConnectionString = sqliteConnectionString;
             Assert.IsNull(x.ErrorMessage);
-            System.Data.DataTable t = 
-                x.SelectTable("select * from testtable where f1 = @f1", new XQueryParameter("@f1", "text1"));
+            System.Data.DataTable t =
+                x.SelectTable("select * from testtable where f1 = @f1",
+                x.AddParameter("@f1", "text1"));
+
             Assert.AreEqual(1, t.Rows.Count);
         }
 
@@ -221,7 +223,7 @@ namespace XclassTests.Database
             // perform transaction
             for (int a = 0; a < 5; a++)
             {
-                Assert.AreEqual(-1, x.PerformTransactionCommand(sqlInsert));
+                Assert.AreEqual(-1, x.ExecuteTransaction(sqlInsert));
                 Assert.IsNotNull(x.ErrorMessage);
             }
             Assert.IsFalse(x.CommitTransaction());

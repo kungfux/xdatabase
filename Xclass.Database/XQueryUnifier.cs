@@ -15,8 +15,6 @@
  */
 
 using MySql.Data.MySqlClient;
-using System;
-using System.Data;
 using System.Data.Common;
 using System.Data.OleDb;
 using System.Data.SQLite;
@@ -25,7 +23,23 @@ namespace Xclass.Database
 {
     public partial class XQuery
     {
-        // Get new connection instance based on XDatabaseType
+        // Get new instance of appropriate DbParameter
+        private DbParameter getParameter()
+        {
+            switch (databaseTypeChosen)
+            {
+                case XDatabaseType.SQLite:
+                    return new SQLiteParameter();
+                case XDatabaseType.MySQL:
+                    return new MySqlParameter();
+                case XDatabaseType.MS_Access:
+                    return new OleDbParameter();
+            }
+            // not all code paths return a value
+            return new SQLiteParameter();
+        }
+
+        // Get new instance of appropriate DbConnection
         private DbConnection getConnectionInstance()
         {
             switch (databaseTypeChosen)
@@ -41,7 +55,7 @@ namespace Xclass.Database
             return new SQLiteConnection();
         }
 
-        // Get new instance of appropriate DataAdapter
+        // Get new instance of appropriate DbDataAdapter
         private DbDataAdapter getDataAdapter()
         {
             switch (databaseTypeChosen)
@@ -57,7 +71,7 @@ namespace Xclass.Database
             return new SQLiteDataAdapter();
         }
 
-        // Get new instance of appropriate Command
+        // Get new instance of appropriate DbCommand
         private DbCommand getCommand()
         {
             switch (databaseTypeChosen)
@@ -71,21 +85,6 @@ namespace Xclass.Database
             }
             // not all code paths return a value
             return new SQLiteCommand();
-        }
-
-        private IDataParameter getParameter()
-        {
-            switch (databaseTypeChosen)
-            {
-                case XDatabaseType.SQLite:
-                    return new SQLiteParameter();
-                case XDatabaseType.MySQL:
-                    return new MySqlParameter();
-                case XDatabaseType.MS_Access:
-                    return new OleDbParameter();
-            }
-            // not all code paths return a value
-            return new SQLiteParameter();
         }
     }
 }

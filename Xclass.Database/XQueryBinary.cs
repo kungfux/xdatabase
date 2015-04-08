@@ -16,6 +16,7 @@
 
 using System;
 using System.Data;
+using System.Data.Common;
 using System.Drawing;
 using System.IO;
 
@@ -74,7 +75,7 @@ namespace Xclass.Database
         /// </summary>
         /// <param name="pSqlQuery">Query statement</param>
         /// <returns>Bytes or null</returns>
-        public byte[] GetBinaryData(string pSqlQuery, params IDataParameter[] pDataArgs)
+        public byte[] GetBinaryData(string pSqlQuery, params DbParameter[] pDataArgs)
         {
             clearError();
 
@@ -95,7 +96,7 @@ namespace Xclass.Database
         /// </summary>
         /// <param name="pSqlQuery">Query statement</param>
         /// <returns>Image</returns>
-        public Image GetBinaryAsImage(string pSqlQuery, params IDataParameter[] pDataArgs)
+        public Image GetBinaryAsImage(string pSqlQuery, params DbParameter[] pDataArgs)
         {
             clearError();
 

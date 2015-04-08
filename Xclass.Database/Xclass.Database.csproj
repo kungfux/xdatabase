@@ -56,9 +56,9 @@
     <Compile Include="XQueryBinary.cs" />
     <Compile Include="XQueryDatabaseType.cs" />
     <Compile Include="XQueryErrorReporting.cs" />
-    <Compile Include="XQueryParameter.cs" />
     <Compile Include="XQueryTransaction.cs" />
     <Compile Include="XQueryUnifier.cs" />
+    <Compile Include="XQueryUnifierParameter.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

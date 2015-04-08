@@ -223,7 +223,7 @@ namespace Xclass.Database
         /// <param name="pSqlQuery">Sql query statement</param>
         /// <param name="pDataArgs">Query arguments</param>
         /// <returns>System.Data.DataTable or null</returns>
-        public DataTable SelectTable(string pSqlQuery, params XQueryParameter[] pDataArgs)
+        public DataTable SelectTable(string pSqlQuery, params DbParameter[] pDataArgs)
         {
             clearError();
             var tableResults = new DataTable();
@@ -275,7 +275,7 @@ namespace Xclass.Database
         /// <param name="pSqlQuery">Query statement</param>
         /// <param name="pDataArgs">Query arguments</param>
         /// <returns>System.Data.DataRow or null</returns>
-        public DataRow SelectRow(string pSqlQuery, params XQueryParameter[] pDataArgs)
+        public DataRow SelectRow(string pSqlQuery, params DbParameter[] pDataArgs)
         {
             var table = SelectTable(pSqlQuery, pDataArgs);
             return table != null && table.Rows.Count == 1 ? table.Rows[0] : null;
@@ -287,7 +287,7 @@ namespace Xclass.Database
         /// <param name="pSqlQuery">Query statement</param>
         /// <param name="pDataArgs">Query arguments</param>
         /// <returns>System.Data.DataRow or null</returns>
-        public DataColumn SelectColumn(string pSqlQuery, params XQueryParameter[] pDataArgs)
+        public DataColumn SelectColumn(string pSqlQuery, params DbParameter[] pDataArgs)
         {
             var table = SelectTable(pSqlQuery, pDataArgs);
             return table != null && table.Columns.Count == 1 ? table.Columns[0] : null;
@@ -300,7 +300,7 @@ namespace Xclass.Database
         /// <param name="pSqlQuery">Query statement</param>
         /// <param name="pDataArgs">Query arguments</param>
         /// <returns>System.Data.DataRow or null</returns>
-        public T SelectCell<T>(string pSqlQuery, params XQueryParameter[] pDataArgs)
+        public T SelectCell<T>(string pSqlQuery, params DbParameter[] pDataArgs)
         {
             var table = SelectTable(pSqlQuery, pDataArgs);
             if (table != null && 
@@ -341,7 +341,7 @@ namespace Xclass.Database
         /// <param name="pDefaultValue">Default value that will be returned in case of error</param>
         /// <param name="pDataArgs">Query arguments</param>
         /// <returns>System.Data.DataRow or null</returns>
-        public T SelectCell<T>(string pSqlQuery, T pDefaultValue = default(T), params XQueryParameter[] pDataArgs)
+        public T SelectCell<T>(string pSqlQuery, T pDefaultValue = default(T), params DbParameter[] pDataArgs)
         {
             var table = SelectTable(pSqlQuery, pDataArgs);
             if (table != null && table.Rows.Count == 1 && table.Columns.Count == 1 && table.Rows[0].ItemArray[0].GetType() == typeof(T))
@@ -360,7 +360,7 @@ namespace Xclass.Database
         /// <param name="pSqlQuery">Query statement</param>
         /// <param name="pDataArgs">Query arguments</param>
         /// <returns>Number of affected rows or -1 in case error occur</returns>
-        public int ChangeData(string pSqlQuery, params XQueryParameter[] pDataArgs)
+        public int ChangeData(string pSqlQuery, params DbParameter[] pDataArgs)
         {
             clearError();
             try

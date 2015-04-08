@@ -16,11 +16,24 @@
 
 using System;
 using System.Data;
+using System.Data.Common;
 
 namespace Xclass.Database
 {
-    public class XQueryParameter : IDataParameter
+    public partial class XQuery
     {
-        
+        /// <summary>
+        /// Create new DbParameter
+        /// </summary>
+        /// <param name="pParameterName">Parameter Name</param>
+        /// <param name="pValue">Value</param>
+        /// <returns></returns>
+        public DbParameter AddParameter(string pParameterName, object pValue)
+        {
+            DbParameter newParam = getParameter();
+            newParam.ParameterName = pParameterName;
+            newParam.Value = pValue;
+            return newParam;
+        }
     }
 }

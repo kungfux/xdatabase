@@ -24,6 +24,10 @@ namespace Xclass.Database
     {
         private DbTransaction transaction = null;
 
+        /// <summary>
+        /// Begin new transaction
+        /// </summary>
+        /// <returns>True if success, false if not</returns>
         public bool BeginTransaction()
         {
             clearError();
@@ -43,6 +47,10 @@ namespace Xclass.Database
             }
         }
 
+        /// <summary>
+        /// Commit transaction
+        /// </summary>
+        /// <returns>True if success, false if not</returns>
         public bool CommitTransaction()
         {
             clearError();
@@ -65,6 +73,10 @@ namespace Xclass.Database
             }
         }
 
+        /// <summary>
+        /// Rollback transaction
+        /// </summary>
+        /// <returns>True if success, false if not</returns>
         public bool RollbackTransaction()
         {
             clearError();
@@ -87,7 +99,13 @@ namespace Xclass.Database
             }
         }
 
-        public int PerformTransactionCommand(string pSqlQuery, params IDataParameter[] pDataArgs)
+        /// <summary>
+        /// Execute command while transaction
+        /// </summary>
+        /// <param name="pSqlQuery"></param>
+        /// <param name="pDataArgs"></param>
+        /// <returns></returns>
+        public int ExecuteTransaction(string pSqlQuery, params IDataParameter[] pDataArgs)
         {
             clearError();
             try

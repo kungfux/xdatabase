@@ -20,6 +20,7 @@ namespace Xclass.Database
 {
     public partial class XQuery
     {
+        // Enumeration of supported databases
         public enum XDatabaseType
         {
             SQLite,
