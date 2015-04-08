@@ -21,13 +21,13 @@ namespace Xclass.Database
     public partial class XQuery
     {
         /// <summary>
-        /// Enumeration of supported databases
+        /// Enumeration of ChangeData() result interpretations
         /// </summary>
-        public enum XDatabaseType
+        public enum XResult
         {
-            SQLite,
-            MySQL,
-            MS_Access
+            Error = -1,
+            NothingChanged = 0,
+            ChangesApplied = 1
         }
     }
 }

@@ -46,7 +46,7 @@ namespace Xclass.Database
         // Database connection (can be SQLiteConnection, MySqlConnection or OleDbConnection)
         private DbConnection connection = null;
         private XDatabaseType databaseTypeChosen;
-        private string lastOperationErrorMessage;
+        private string lastOperationErrorMessage = null;
         private string databaseConnectionString = null;
         private int operationTimeout = 30000;
         private bool keepDatabaseOpened = false;

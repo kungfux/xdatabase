@@ -230,7 +230,7 @@ namespace XclassTests.Database
             Assert.IsNotNull(x.ErrorMessage);
         }
 
-        //[Test]
+        [Test]
         [Category("Negative")]
         public void TestInsertBinaryWhenTransactionIsStarted()
         {
