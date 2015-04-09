@@ -100,5 +100,39 @@ namespace XclassTests.Database
             Assert.IsTrue(x.CommitTransaction());
             Assert.IsNull(x.ErrorMessage);
         }
+
+        [Test]
+        public void TestConnectionIsClosedAfterCommit()
+        {
+            XQuery x = new XQuery(dbType);
+            x.ConnectionString = sqliteConnectionString;
+            Assert.IsTrue(x.BeginTransaction());
+            Assert.IsNull(x.ErrorMessage);
+            Assert.IsTrue(x.IsActiveConnection);
+            Assert.IsTrue(x.IsTransactionMode);
+            Assert.AreEqual(1, x.ChangeData(sqlInsert));
+            Assert.IsNull(x.ErrorMessage);
+            Assert.IsTrue(x.CommitTransaction());
+            Assert.IsNull(x.ErrorMessage);
+            Assert.IsFalse(x.IsActiveConnection);
+            Assert.IsFalse(x.IsTransactionMode);
+        }
+
+        [Test]
+        public void TestConnectionIsClosedAfterRollback()
+        {
+            XQuery x = new XQuery(dbType);
+            x.ConnectionString = sqliteConnectionString;
+            Assert.IsTrue(x.BeginTransaction());
+            Assert.IsNull(x.ErrorMessage);
+            Assert.IsTrue(x.IsActiveConnection);
+            Assert.IsTrue(x.IsTransactionMode);
+            Assert.AreEqual(1, x.ChangeData(sqlInsert));
+            Assert.IsNull(x.ErrorMessage);
+            Assert.IsTrue(x.CommitTransaction());
+            Assert.IsNull(x.ErrorMessage);
+            Assert.IsFalse(x.IsActiveConnection);
+            Assert.IsFalse(x.IsTransactionMode);
+        }
     }
 }

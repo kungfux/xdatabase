@@ -57,6 +57,7 @@ namespace Xclass.Database
             try
             {
                 transaction.Commit();
+                transaction = null;
                 return true;
             }
             catch (Exception ex)
@@ -80,6 +81,7 @@ namespace Xclass.Database
             try
             {
                 transaction.Rollback();
+                transaction = null;
                 return true;
             }
             catch (Exception ex)
