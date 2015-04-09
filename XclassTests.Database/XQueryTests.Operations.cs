@@ -27,10 +27,7 @@ namespace XclassTests.Database
         [Test]
         public void TestArithmeticOperationWithSelectCell()
         {
-            XQuery x = new XQuery(dbType);
-            x.ConnectionString = sqliteConnectionString;
-            Assert.IsNull(x.ErrorMessage);
-            Assert.AreEqual(30, x.SelectCell<Int64>("select 10+20;"));
+            Assert.AreEqual(30, getXQuery().SelectCell<Int64>("select 10+20;"));
         }
 
         [TestCase((string)"text1", "SELECT f1 FROM TestTable;")]
@@ -38,20 +35,14 @@ namespace XclassTests.Database
         [TestCase((double)1.1, "SELECT f3 FROM TestTable;")]
         public void TestThatSelectCellCanReturnDifferentTypesOfData<T>(T pExpectedValue, string sqlSelectStatement)
         {
-            XQuery x = new XQuery(dbType);
-            x.ConnectionString = sqliteConnectionString;
-            Assert.IsNull(x.ErrorMessage);
-            Assert.AreEqual(pExpectedValue, x.SelectCell<T>(sqlSelectStatement));
+            Assert.AreEqual(pExpectedValue, getXQuery().SelectCell<T>(sqlSelectStatement));
         }
 
         [Test]
         public void TestArgumentsCanBePassedToSelectTable()
         {
-            XQuery x = new XQuery(dbType);
-            x.ConnectionString = sqliteConnectionString;
-            Assert.IsNull(x.ErrorMessage);
+            XQuery x = getXQuery();
             x.ChangeData("insert into test (f1) values ('asd')");
-            Assert.IsNull(x.ErrorMessage);
             System.Data.DataTable t = 
                 x.SelectTable("select * from test where f1 = @data",
                 new System.Data.SQLite.SQLiteParameter("@data", "asd"));
@@ -62,9 +53,7 @@ namespace XclassTests.Database
         [Test]
         public void TestArgumentsCanBePassed()
         {
-            XQuery x = new XQuery(dbType);
-            x.ConnectionString = sqliteConnectionString;
-            Assert.IsNull(x.ErrorMessage);
+            XQuery x = getXQuery();
             System.Data.DataTable t =
                 x.SelectTable("select * from testtable where f1 = @f1",
                 x.AddParameter("@f1", "text1"));

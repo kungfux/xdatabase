@@ -25,7 +25,7 @@ namespace XclassTests.Database
     public partial class XQueryTests
     {
         [Test]
-        public void TestDefiningOfTheConnectionString()
+        public void TestConnectionStringIsAcceptedInCaseSuccessfullConnection()
         {
             XQuery x = new XQuery(dbType);
             // here is Xclass should perform test connection

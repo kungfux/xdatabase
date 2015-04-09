@@ -29,10 +29,7 @@ namespace XclassTests.Database
         [Test]
         public void TestTransactionWorks()
         {
-            XQuery x = new XQuery(dbType);
-            x.ConnectionString = sqliteConnectionString;
-            Assert.IsNull(x.ErrorMessage);
-
+            XQuery x = getXQuery();
             // perform transaction
             Assert.IsTrue(x.BeginTransaction());
             Assert.IsNull(x.ErrorMessage);
@@ -46,14 +43,10 @@ namespace XclassTests.Database
         [Test]
         public void TestTransactionInsertsData()
         {
-            XQuery x = new XQuery(dbType);
-            x.ConnectionString = sqliteConnectionString;
-            Assert.IsNull(x.ErrorMessage);
-
+            XQuery x = getXQuery();
             // check current rows count
             Int64 rowsBeforeTransaction = 0;
             rowsBeforeTransaction = x.SelectCell<Int64>("select count(*) from test;");
-
             // perform transaction
             Assert.IsTrue(x.BeginTransaction());
             Assert.IsNull(x.ErrorMessage);
@@ -70,7 +63,7 @@ namespace XclassTests.Database
         [Test]
         public void TestTransactionFailsIfNoConnectionSpecified()
         {
-            XQuery x = new XQuery(dbType);
+            XQuery x = getXQuery();
             Assert.IsFalse(x.BeginTransaction());
             Assert.IsNotNull(x.ErrorMessage);
         }
@@ -78,9 +71,7 @@ namespace XclassTests.Database
         [Test]
         public void TestEndTransactionFailsIfWasNotStarted()
         {
-            XQuery x = new XQuery(dbType);
-            x.ConnectionString = sqliteConnectionString;
-            Assert.IsNull(x.ErrorMessage);
+            XQuery x = getXQuery();
             Assert.IsFalse(x.CommitTransaction());
             Assert.IsNotNull(x.ErrorMessage);
         }
@@ -88,8 +79,7 @@ namespace XclassTests.Database
         [Test]
         public void TestInsertBinaryWhenTransactionIsStarted()
         {
-            XQuery x = new XQuery(dbType);
-            x.ConnectionString = sqliteConnectionString;
+            XQuery x = getXQuery();
             Assert.IsTrue(x.BeginTransaction());
             Assert.IsNull(x.ErrorMessage);
             //
@@ -104,8 +94,7 @@ namespace XclassTests.Database
         [Test]
         public void TestConnectionIsClosedAfterCommit()
         {
-            XQuery x = new XQuery(dbType);
-            x.ConnectionString = sqliteConnectionString;
+            XQuery x = getXQuery();
             Assert.IsTrue(x.BeginTransaction());
             Assert.IsNull(x.ErrorMessage);
             Assert.IsTrue(x.IsActiveConnection);
@@ -121,8 +110,7 @@ namespace XclassTests.Database
         [Test]
         public void TestConnectionIsClosedAfterRollback()
         {
-            XQuery x = new XQuery(dbType);
-            x.ConnectionString = sqliteConnectionString;
+            XQuery x = getXQuery();
             Assert.IsTrue(x.BeginTransaction());
             Assert.IsNull(x.ErrorMessage);
             Assert.IsTrue(x.IsActiveConnection);

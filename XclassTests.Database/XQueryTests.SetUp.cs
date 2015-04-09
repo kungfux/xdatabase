@@ -29,6 +29,13 @@ namespace XclassTests.Database
             "Data Source=TestDataStorage\\TestDatabase.sqlite;Version=3;UTF8Encoding=True;foreign keys=true;";
         public const XQuery.XDatabaseType dbType = XQuery.XDatabaseType.SQLite;
 
+        public XQuery getXQuery()
+        {
+            XQuery x = new XQuery(dbType);
+            x.ConnectionString = sqliteConnectionString;
+            return x;
+        }
+
         [TestFixtureSetUp]
         public void Init()
         {

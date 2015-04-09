@@ -25,29 +25,22 @@ namespace XclassTests.Database
     public partial class XQueryTests
     {
         [Test]
-        public void TestPutFile()
+        public void TestFileCanBeStored()
         {
-            XQuery x = new XQuery(dbType);
-            x.ConnectionString = sqliteConnectionString;
-            Assert.IsNull(x.ErrorMessage);
-
-            Assert.IsTrue(x.PutFile(Environment.CurrentDirectory + "\\TestDataStorage\\test_image_picture-128.png",
+            Assert.IsTrue(getXQuery().PutFile(
+                Environment.CurrentDirectory + "\\TestDataStorage\\test_image_picture-128.png",
                 "insert into test (f4) values (@file);", "@file"));
         }
 
         [Test]
-        public void TestGetImage()
+        public void TestFileCanBeRetrievedAsImage()
         {
-            XQuery x = new XQuery(dbType);
-            x.ConnectionString = sqliteConnectionString;
-            Assert.IsNull(x.ErrorMessage);
-
-            Assert.IsTrue(x.PutFile(Environment.CurrentDirectory + "\\TestDataStorage\\test_image_picture-128.png",
-                "insert into test (f4) values (@file);", "@file"));
-
-            Image i = x.GetBinaryAsImage("select f4 from test where f4 is not null");
-            Assert.NotNull(i);
-            Assert.GreaterOrEqual(i.Height, 1);
+            XQuery x = getXQuery();
+            x.PutFile(
+                Environment.CurrentDirectory + "\\TestDataStorage\\test_image_picture-128.png",
+                "insert into test (f4) values (@file);", "@file");
+            Image image = x.GetBinaryAsImage("select f4 from test where f4 is not null");
+            Assert.GreaterOrEqual(image.Height, 1);
         }
     }
 }
