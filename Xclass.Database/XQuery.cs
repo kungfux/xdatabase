@@ -49,7 +49,6 @@ namespace Xclass.Database
         private string lastOperationErrorMessage = null;
         private string databaseConnectionString = null;
         private int operationTimeout = 30000;
-        private bool keepDatabaseOpened = false;
 
         #endregion
 
@@ -121,21 +120,6 @@ namespace Xclass.Database
                 {
                     return false;
                 }
-            }
-        }
-
-        /// <summary>
-        /// Is connection to the database should be kept opened
-        /// </summary>
-        public bool KeepDatabaseOpened
-        {
-            get
-            {
-                return keepDatabaseOpened;
-            }
-            set
-            {
-                keepDatabaseOpened = value;
             }
         }
 
@@ -262,10 +246,7 @@ namespace Xclass.Database
             }
             finally
             {
-                if (!KeepDatabaseOpened)
-                {
-                    closeConnection();
-                }
+                closeConnection();
             }
         }
 
@@ -392,10 +373,7 @@ namespace Xclass.Database
             }
             finally
             {
-                if (!KeepDatabaseOpened)
-                {
-                    closeConnection();
-                }
+                closeConnection();
             }
         }
 

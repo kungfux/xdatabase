@@ -66,10 +66,7 @@ namespace Xclass.Database
             }
             finally
             {
-                if (!KeepDatabaseOpened)
-                {
-                    closeConnection();
-                }
+                closeConnection();
             }
         }
 
@@ -92,10 +89,7 @@ namespace Xclass.Database
             }
             finally
             {
-                if (!KeepDatabaseOpened)
-                {
-                    closeConnection();
-                }
+                closeConnection();
             }
         }
     }
