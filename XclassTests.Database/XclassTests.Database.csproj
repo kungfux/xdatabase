@@ -56,7 +56,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="XQuerySQLiteTests.cs" />
+    <Compile Include="XQueryTests.Operations.cs" />
+    <Compile Include="XQueryTests.BinaryData.cs" />
+    <Compile Include="XQueryTests.ConnectionString.cs" />
+    <Compile Include="XQueryTests.InitialState.cs" />
+    <Compile Include="XQueryTests.SetUp.cs" />
+    <Compile Include="XQueryTests.Transactions.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Xclass.Database\Xclass.Database.csproj">
