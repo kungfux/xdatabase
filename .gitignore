@@ -9,3 +9,4 @@ packages/*
 !packages/SQLite/README.md
 !packages/MySql/README.md
 /XDatabaseTestsCoverage/CoverageReport/*
+!/XDatabaseTestsCoverage/CoverageReport/badge_combined.svg

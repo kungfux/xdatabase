@@ -1,6 +1,5 @@
-![Logo](https://cloud.githubusercontent.com/assets/10548881/24018440/ea78b658-0aa4-11e7-860b-e2326e80d88c.png)   
-
 [![Build status](https://ci.appveyor.com/api/projects/status/9ixq897elu0uut74?svg=true)](https://ci.appveyor.com/project/kungfux/xclass)
+[![Coverage status](https://github.com/kungfux/xdatabase/tree/feature_XDatabase/XDatabaseTestsCoverage/CoverageReport/badge_combined.svg)]
 
 # XDatabase
 

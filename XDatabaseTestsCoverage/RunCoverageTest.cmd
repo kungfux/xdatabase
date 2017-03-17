@@ -53,6 +53,6 @@ if not exist "%NUnitConsole%" (
 mkdir %ReportPath%
 %OpenCoverConsole% "-register:user" "-target:%NUnitConsole%" "-targetdir:..\XDatabaseTests\bin\Debug" "-targetargs:XDatabaseTests.dll" "-output:.\%ReportPath%\TestsCodeCoverageResults.xml"
 :: Build reports
-%ReportGenerator% "-reports:.\%ReportPath%\TestsCodeCoverageResults.xml" "-filters:-XDatabaseTests*" "-targetdir:.\%ReportPath%" "-reporttypes:html"
+%ReportGenerator% "-reports:.\%ReportPath%\TestsCodeCoverageResults.xml" "-filters:-XDatabaseTests*" "-targetdir:.\%ReportPath%" "-reporttypes:html" "-reporttypes:Badges"
 :: Open report
 @start %cd%\%ReportPath%\index.htm
