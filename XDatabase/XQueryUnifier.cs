@@ -23,64 +23,64 @@ namespace XDatabase
 {
     public partial class XQuery
     {
+        public DbParameter AddParameter(string parameterName, object value)
+        {
+            var newParam = GetParameter();
+            newParam.ParameterName = parameterName;
+            newParam.Value = value;
+            return newParam;
+        }
+
         private DbParameter GetParameter()
         {
             switch (CurrentXDatabaseType)
             {
-                case XDatabaseType.SqLite:
-                    return new SQLiteParameter();
                 case XDatabaseType.MySql:
                     return new MySqlParameter();
                 case XDatabaseType.OleDb:
                     return new OleDbParameter();
+                default:
+                    return new SQLiteParameter();
             }
-
-            return new SQLiteParameter();
         }
 
-        private DbConnection GetConnectionInstance()
+        private DbConnection GetConnection()
         {
             switch (CurrentXDatabaseType)
             {
-                case XDatabaseType.SqLite:
-                    return new SQLiteConnection();
                 case XDatabaseType.MySql:
                     return new MySqlConnection();
                 case XDatabaseType.OleDb:
                     return new OleDbConnection();
+                default:
+                    return new SQLiteConnection();
             }
-
-            return new SQLiteConnection();
         }
 
         private DbDataAdapter GetDataAdapter()
         {
             switch (CurrentXDatabaseType)
             {
-                case XDatabaseType.SqLite:
-                    return new SQLiteDataAdapter();
                 case XDatabaseType.MySql:
                     return new MySqlDataAdapter();
                 case XDatabaseType.OleDb:
                     return new OleDbDataAdapter();
+                default:
+                    return new SQLiteDataAdapter();
             }
-
-            return new SQLiteDataAdapter();
         }
 
         private DbCommand GetCommand()
         {
             switch (CurrentXDatabaseType)
             {
-                case XDatabaseType.SqLite:
-                    return new SQLiteCommand();
                 case XDatabaseType.MySql:
                     return new MySqlCommand();
                 case XDatabaseType.OleDb:
                     return new OleDbCommand();
+                default:
+                    return new SQLiteCommand();
             }
-
-            return new SQLiteCommand();
         }
     }
 }

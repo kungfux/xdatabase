@@ -91,7 +91,6 @@
     <Compile Include="Constructors\XQuerySqlite.cs" />
     <Compile Include="Methods\XQueryUpdate.cs" />
     <Compile Include="XQueryUnifier.cs" />
-    <Compile Include="XQueryUnifierParameter.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

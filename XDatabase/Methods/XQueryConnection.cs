@@ -24,7 +24,7 @@ namespace XDatabase
         {
             ClearError();
 
-            using (var newConnection = GetConnectionInstance())
+            using (var newConnection = GetConnection())
             {
                 try
                 {
@@ -45,7 +45,7 @@ namespace XDatabase
         {
             ClearError();
 
-            _connection = GetConnectionInstance();
+            _connection = GetConnection();
             try
             {
                 _connection.ConnectionString = ConnectionString;
