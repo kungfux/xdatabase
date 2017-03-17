@@ -29,6 +29,8 @@ set OpenCoverConsole=%LOCALAPPDATA%\Apps\OpenCover\OpenCover.Console.exe
 set ReportGenerator=%LOCALAPPDATA%\Apps\ReportGenerator\ReportGenerator.exe
 set NUnitConsole=C:\Program Files (x86)\NUnit.org\nunit-console\nunit3-console.exe
 
+set ReportPath=CoverageReport
+
 :: Check OpenCover location
 if not exist "%OpenCoverConsole%" (
 	echo "OpenCover is not found. Please install from %OpenCoverConsoleWeb% or check its location." 
@@ -48,8 +50,9 @@ if not exist "%NUnitConsole%" (
 	)
 
 :: Perform code coverage test
-%OpenCoverConsole% "-register:user" "-target:%NUnitConsole%" "-targetdir:..\XDatabaseTests\bin\Debug" "-targetargs:XDatabaseTests.dll" "-output:.\TestsCodeCoverageResults.xml"
+mkdir %ReportPath%
+%OpenCoverConsole% "-register:user" "-target:%NUnitConsole%" "-targetdir:..\XDatabaseTests\bin\Debug" "-targetargs:XDatabaseTests.dll" "-output:.\%ReportPath%\TestsCodeCoverageResults.xml"
 :: Build reports
-%ReportGenerator% "-reports:.\TestsCodeCoverageResults.xml" "-filters:-XDatabaseTests*" "-targetdir:." "-reporttypes:html"
+%ReportGenerator% "-reports:.\%ReportPath%\TestsCodeCoverageResults.xml" "-filters:-XDatabaseTests*" "-targetdir:.\%ReportPath%" "-reporttypes:html"
 :: Open report
-@start %cd%\index.htm
+@start %cd%\%ReportPath%\index.htm
