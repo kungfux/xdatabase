@@ -16,10 +16,11 @@
 
 namespace XDatabase
 {
-    public enum XDatabaseType
+    public class XQueryOleDb : XQuery
     {
-        SqLite,
-        MySql,
-        OleDb
+        public XQueryOleDb()
+        {
+            CurrentXDatabaseType = XDatabaseType.OleDb;
+        }
     }
 }

@@ -14,14 +14,16 @@
  * limitations under the License.
  */
 
+using System;
 using System.Data;
+using System.Data.Common;
 
 namespace XDatabase
 {
     public partial class XQuery
     {
         public bool IsInTransactionMode => _transaction != null;
-        public readonly XDatabaseType CurrentXDatabaseType;
+        public XDatabaseType CurrentXDatabaseType { get; internal set; }
 
         public int Timeout
         {
@@ -69,5 +71,9 @@ namespace XDatabase
                 }
             }
         }
+
+        private DbConnection _connection;
+        private string _databaseConnectionString;
+        private int _operationTimeout = (int)TimeSpan.FromSeconds(30).TotalMilliseconds;
     }
 }

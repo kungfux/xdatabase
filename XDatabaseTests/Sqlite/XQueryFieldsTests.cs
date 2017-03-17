@@ -18,25 +18,22 @@ using System;
 using NUnit.Framework;
 using XDatabase;
 
-namespace XDatabaseTests
+namespace XDatabaseTests.Sqlite
 {
     public class XQueryFieldsTests
     {
-        private const XDatabaseType DbType = XDatabaseType.SqLite;
-
         [Test]
         public void TestTimeoutCanBeChanges()
         {
             var timeout = (int)TimeSpan.FromSeconds(10).TotalMilliseconds;
-            var xQuery = new XQuery(DbType);
-            xQuery.Timeout = timeout;
+            var xQuery = new XQuerySqlite {Timeout = timeout};
             Assert.AreEqual(timeout, xQuery.Timeout);
         }
 
         [Test]
         public void TestTimeoutCannotBeSetToZero()
         {
-            var xQuery = new XQuery(DbType);
+            var xQuery = new XQuerySqlite();
             var defaultTimeout = xQuery.Timeout;
             xQuery.Timeout = 0;
             Assert.AreEqual(defaultTimeout, xQuery.Timeout);

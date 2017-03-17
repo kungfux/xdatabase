@@ -17,15 +17,15 @@
 using NUnit.Framework;
 using XDatabase;
 
-namespace XDatabaseTests
+namespace XDatabaseTests.OleDb
 {
-    public class XQueryMySqlTests
+    public class XQueryOleDbTests
     {
         [Test]
-        public void TestMySqlInstanceCanBeCreated()
+        public void TestOleDbInstanceCanBeCreated()
         {
             const string paramValue = "value";
-            var xQuery = new XQuery(XDatabaseType.MySql);
+            var xQuery = new XQueryOleDb();
             var param = xQuery.AddParameter("@test", paramValue);
             Assert.AreEqual(paramValue, param.Value);
         }

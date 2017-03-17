@@ -78,16 +78,18 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Constructors\XQueryOleDb.cs" />
+    <Compile Include="Constructors\XQueryMySql.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="XQuerySelect.cs" />
-    <Compile Include="XQueryBinary.cs" />
-    <Compile Include="XQueryConnection.cs" />
+    <Compile Include="Methods\XQuerySelect.cs" />
+    <Compile Include="Methods\XQueryBinary.cs" />
+    <Compile Include="Methods\XQueryConnection.cs" />
     <Compile Include="XQueryDatabaseType.cs" />
     <Compile Include="XQueryErrorReporting.cs" />
-    <Compile Include="XQueryPrivateFields.cs" />
-    <Compile Include="XQueryPublicFields.cs" />
+    <Compile Include="XQueryVariables.cs" />
     <Compile Include="XQueryResult.cs" />
-    <Compile Include="XQueryUpdate.cs" />
+    <Compile Include="Constructors\XQuerySqlite.cs" />
+    <Compile Include="Methods\XQueryUpdate.cs" />
     <Compile Include="XQueryUnifier.cs" />
     <Compile Include="XQueryUnifierParameter.cs" />
   </ItemGroup>

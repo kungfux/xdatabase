@@ -31,7 +31,7 @@ namespace XDatabase
                     return new SQLiteParameter();
                 case XDatabaseType.MySql:
                     return new MySqlParameter();
-                case XDatabaseType.MsAccess:
+                case XDatabaseType.OleDb:
                     return new OleDbParameter();
             }
 
@@ -46,7 +46,7 @@ namespace XDatabase
                     return new SQLiteConnection();
                 case XDatabaseType.MySql:
                     return new MySqlConnection();
-                case XDatabaseType.MsAccess:
+                case XDatabaseType.OleDb:
                     return new OleDbConnection();
             }
 
@@ -61,7 +61,7 @@ namespace XDatabase
                     return new SQLiteDataAdapter();
                 case XDatabaseType.MySql:
                     return new MySqlDataAdapter();
-                case XDatabaseType.MsAccess:
+                case XDatabaseType.OleDb:
                     return new OleDbDataAdapter();
             }
 
@@ -76,7 +76,7 @@ namespace XDatabase
                     return new SQLiteCommand();
                 case XDatabaseType.MySql:
                     return new MySqlCommand();
-                case XDatabaseType.MsAccess:
+                case XDatabaseType.OleDb:
                     return new OleDbCommand();
             }
 

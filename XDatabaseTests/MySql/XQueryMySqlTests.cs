@@ -14,15 +14,20 @@
  * limitations under the License.
  */
 
-using System;
-using System.Data.Common;
+using NUnit.Framework;
+using XDatabase;
 
-namespace XDatabase
+namespace XDatabaseTests.MySql
 {
-    public partial class XQuery
+    public class XQueryMySqlTests
     {
-        private DbConnection _connection;
-        private string _databaseConnectionString;
-        private int _operationTimeout = (int)TimeSpan.FromSeconds(30).TotalMilliseconds;
+        [Test]
+        public void TestMySqlInstanceCanBeCreated()
+        {
+            const string paramValue = "value";
+            var xQuery = new XQueryMySql();
+            var param = xQuery.AddParameter("@test", paramValue);
+            Assert.AreEqual(paramValue, param.Value);
+        }
     }
 }

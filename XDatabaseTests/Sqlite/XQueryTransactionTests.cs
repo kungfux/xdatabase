@@ -17,17 +17,16 @@
 using NUnit.Framework;
 using XDatabase;
 
-namespace XDatabaseTests
+namespace XDatabaseTests.Sqlite
 {
     public class XQueryTransactionTests
     {
         private const string SqliteConnectionString = "Data Source=:memory:";
-        private const XDatabaseType DbType = XDatabaseType.SqLite;
 
         [Test]
         public void TestTransactionFailsIfNoConnectionSpecified()
         {
-            var xQuery = new XQuery(DbType);
+            var xQuery = new XQuerySqlite();
             Assert.IsFalse(xQuery.BeginTransaction());
             Assert.IsNotNull(xQuery.ErrorMessage);
         }
@@ -35,14 +34,14 @@ namespace XDatabaseTests
         [Test]
         public void TestCoomitTransactionFailsIfWasNotStarted()
         {
-            var xQuery = new XQuery(DbType);
+            var xQuery = new XQuerySqlite();
             Assert.IsFalse(xQuery.CommitTransaction());
         }
 
         [Test]
         public void TestConnectionIsActiveAfterBeginTransaction()
         {
-            var xQuery = new XQuery(DbType) { ConnectionString = SqliteConnectionString };
+            var xQuery = new XQuerySqlite() { ConnectionString = SqliteConnectionString };
             xQuery.BeginTransaction();
             Assert.IsTrue(xQuery.IsConnectionOpened);
         }
@@ -50,7 +49,7 @@ namespace XDatabaseTests
         [Test]
         public void TestConnectionIsClosedAfterCommit()
         {
-            var xQuery = new XQuery(DbType) {ConnectionString = SqliteConnectionString};
+            var xQuery = new XQuerySqlite() { ConnectionString = SqliteConnectionString};
             xQuery.BeginTransaction();
             xQuery.CommitTransaction();
             Assert.IsFalse(xQuery.IsConnectionOpened);
@@ -59,7 +58,7 @@ namespace XDatabaseTests
         [Test]
         public void TestConnectionIsClosedAfterRollback()
         {
-            var xQuery = new XQuery(DbType) { ConnectionString = SqliteConnectionString };
+            var xQuery = new XQuerySqlite() { ConnectionString = SqliteConnectionString };
             xQuery.BeginTransaction();
             xQuery.RollbackTransaction();
             Assert.IsFalse(xQuery.IsConnectionOpened);
@@ -68,7 +67,7 @@ namespace XDatabaseTests
         [Test]
         public void TestTransactionFlagIsBeingSet()
         {
-            var xQuery = new XQuery(DbType) { ConnectionString = SqliteConnectionString };
+            var xQuery = new XQuerySqlite() { ConnectionString = SqliteConnectionString };
             xQuery.BeginTransaction();
             Assert.True(xQuery.IsInTransactionMode);
         }

@@ -18,24 +18,23 @@ using System;
 using NUnit.Framework;
 using XDatabase;
 
-namespace XDatabaseTests
+namespace XDatabaseTests.Sqlite
 {
     public class ConnectionStringTests
     {
-        public const string SqliteConnectionString = "Data Source=:memory:";
-        public const XDatabaseType DbType = XDatabaseType.SqLite;
+        private const string SqliteConnectionString = "Data Source=:memory:";
 
         [Test]
         public void TestConnectionStringIsAcceptedInCaseSuccessfulConnection()
         {
-            var xQuery = new XQuery(DbType) {ConnectionString = SqliteConnectionString};
+            var xQuery = new XQuerySqlite() {ConnectionString = SqliteConnectionString};
             Assert.AreEqual(SqliteConnectionString, xQuery.ConnectionString);
         }
 
         [Test]
         public void TestConnectionStringIsRejectedInCaseNoSuccessfulConnection()
         {
-            var xQuery = new XQuery(DbType)
+            var xQuery = new XQuerySqlite()
             {
                 ConnectionString = $"Data Source={Guid.NewGuid()};FailIfMissing=true;"
             };
@@ -45,7 +44,7 @@ namespace XDatabaseTests
         [Test]
         public void TestNoActiveConnectionAfterDefiningConnectionString()
         {
-            var xQuery = new XQuery(DbType) {ConnectionString = SqliteConnectionString};
+            var xQuery = new XQuerySqlite() {ConnectionString = SqliteConnectionString};
             Assert.IsFalse(xQuery.IsConnectionOpened);
         }
     }

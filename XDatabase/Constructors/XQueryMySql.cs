@@ -14,20 +14,13 @@
  * limitations under the License.
  */
 
-using NUnit.Framework;
-using XDatabase;
-
-namespace XDatabaseTests
+namespace XDatabase
 {
-    public class XQueryOleDbTests
+    public class XQueryMySql : XQuery
     {
-        [Test]
-        public void TestOleDbInstanceCanBeCreated()
+        public XQueryMySql()
         {
-            const string paramValue = "value";
-            var xQuery = new XQuery(XDatabaseType.MsAccess);
-            var param = xQuery.AddParameter("@test", paramValue);
-            Assert.AreEqual(paramValue, param.Value);
+            CurrentXDatabaseType = XDatabaseType.MySql;
         }
     }
 }

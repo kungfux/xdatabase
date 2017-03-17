@@ -17,7 +17,7 @@
 using NUnit.Framework;
 using XDatabase;
 
-namespace XDatabaseTests
+namespace XDatabaseTests.Sqlite
 {
     public class XQueryInitialStateTests
     {
@@ -26,42 +26,42 @@ namespace XDatabaseTests
         [Test]
         public void TestInitialStateOfErrorMessageIsNull()
         {
-            var xQuery = new XQuery(DbType);
+            var xQuery = new XQuerySqlite();
             Assert.IsNull(xQuery.ErrorMessage);
         }
 
         [Test]
         public void TestInitialStateOfTimeoutIs30S()
         {
-            var xQuery = new XQuery(DbType);
+            var xQuery = new XQuerySqlite();
             Assert.AreEqual(30000, xQuery.Timeout);
         }
 
         [Test]
         public void TestInitialStateOfConnectionStringIsNull()
         {
-            var xQuery = new XQuery(DbType);
+            var xQuery = new XQuerySqlite();
             Assert.IsNull(xQuery.ConnectionString);
         }
 
         [Test]
         public void TestInitialStateOfIsActiveConnectionIsFalse()
         {
-            var xQuery = new XQuery(DbType);
+            var xQuery = new XQuerySqlite();
             Assert.IsFalse(xQuery.IsConnectionOpened);
         }
 
         [Test]
         public void TestInitialStateOfIsTransactionModeIsFalse()
         {
-            var xQuery = new XQuery(DbType);
+            var xQuery = new XQuerySqlite();
             Assert.IsFalse(xQuery.IsInTransactionMode);
         }
 
         [Test]
         public void TestInitialStateOfDbTypeEqualsToSpecifiedOne()
         {
-            var xQuery = new XQuery(DbType);
+            var xQuery = new XQuerySqlite();
             Assert.AreEqual(DbType, xQuery.CurrentXDatabaseType);
         }
     }
