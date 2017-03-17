@@ -79,6 +79,8 @@
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="XQueryFieldsTests.cs" />
+    <Compile Include="XQueryMySqlTests.cs" />
+    <Compile Include="XQueryOleDbTests.cs" />
     <Compile Include="XQuerySimpleSelectTests.cs" />
     <Compile Include="XQueryBinaryDataTests.cs" />
     <Compile Include="ConnectionStringTests.cs" />

@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+using System;
+using System.Data;
 using NUnit.Framework;
 using XDatabase;
 
@@ -23,6 +25,33 @@ namespace XDatabaseTests
     {
         private const string SqliteConnectionString = "Data Source=:memory:";
         private const XDatabaseType DbType = XDatabaseType.SqLite;
+
+        [Test]
+        public void TestSelectTable()
+        {
+            const string sqlSelectTable = "select 1, 2, 3 union select 4, 5, 6;";
+            var xQuery = new XQuery(DbType) {ConnectionString = SqliteConnectionString};
+            var result = xQuery.SelectTable(sqlSelectTable);
+            Assert.AreEqual(2*3, result.Rows.Count*result.Columns.Count);
+        }
+
+        [Test]
+        public void TestSelectRow()
+        {
+            const string sqlSelectRow = "select 1, 'value', 3.3;";
+            var xQuery = new XQuery(DbType) { ConnectionString = SqliteConnectionString };
+            var result = xQuery.SelectRow(sqlSelectRow);
+            Assert.AreEqual(3, result.ItemArray.Length);
+        }
+
+        [Test]
+        public void TestSelectColumn()
+        {
+            const string sqlSelectColumn = "select 1 union select 2 union select 3;";
+            var xQuery = new XQuery(DbType) { ConnectionString = SqliteConnectionString };
+            var result = xQuery.SelectColumn(sqlSelectColumn);
+            Assert.AreEqual(3, result.Table.Rows.Count);
+        }
 
         [Test]
         public void TestArithmeticOperationWithSelectCell()
@@ -63,6 +92,62 @@ namespace XDatabaseTests
             var xQuery = new XQuery(DbType) { ConnectionString = SqliteConnectionString };
             var result = xQuery.SelectCell<double>("select 1.1;");
             Assert.AreEqual(1.1d, result);
+        }
+
+        [Test]
+        public void TestSelectCellThrowsFormatException()
+        {
+            const string sqlSelect = "select 1;";
+            var xQuery = new XQuery(DbType) { ConnectionString = SqliteConnectionString };
+            Assert.Throws(Is.TypeOf<FormatException>(), delegate
+            {
+                xQuery.SelectCell<string>(sqlSelect);
+            });
+        }
+
+        [Test]
+        public void TestSelectCellThrowsDataException()
+        {
+            const string sqlSelect = "select 1, 2, 3;";
+            var xQuery = new XQuery(DbType) { ConnectionString = SqliteConnectionString };
+            Assert.Throws(Is.TypeOf<DataException>(), delegate
+            {
+                xQuery.SelectCell<long>(sqlSelect);
+            });
+        }
+
+        [Test]
+        public void TestSelectCellThrowsDataExceptionOnEmptyResult()
+        {
+            const string sqlSelect = "select;";
+            var xQuery = new XQuery(DbType) { ConnectionString = SqliteConnectionString };
+            Assert.Throws(Is.TypeOf<DataException>(), delegate
+            {
+                xQuery.SelectCell<long>(sqlSelect);
+            });
+        }
+
+        [Test]
+        public void TestErrorIsLogged()
+        {
+            const string sqlSelect = "select 1, 2, 3;";
+            var xQuery = new XQuery(DbType) { ConnectionString = SqliteConnectionString };
+            xQuery.OnError += XQuery_OnError;
+            try
+            {
+                xQuery.SelectCell<long>(sqlSelect);
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
+
+            Assert.IsNotEmpty(xQuery.ErrorMessage);
+        }
+
+        private void XQuery_OnError(string pErrorMessage)
+        {
+            // empty subscriber
         }
     }
 }

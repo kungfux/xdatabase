@@ -26,43 +26,43 @@ namespace XDatabaseTests
         [Test]
         public void TestInitialStateOfErrorMessageIsNull()
         {
-            var x = new XQuery(DbType);
-            Assert.IsNull(x.ErrorMessage);
+            var xQuery = new XQuery(DbType);
+            Assert.IsNull(xQuery.ErrorMessage);
         }
 
         [Test]
         public void TestInitialStateOfTimeoutIs30S()
         {
-            var x = new XQuery(DbType);
-            Assert.AreEqual(30000, x.Timeout);
+            var xQuery = new XQuery(DbType);
+            Assert.AreEqual(30000, xQuery.Timeout);
         }
 
         [Test]
         public void TestInitialStateOfConnectionStringIsNull()
         {
-            var x = new XQuery(DbType);
-            Assert.IsNull(x.ConnectionString);
+            var xQuery = new XQuery(DbType);
+            Assert.IsNull(xQuery.ConnectionString);
         }
 
         [Test]
         public void TestInitialStateOfIsActiveConnectionIsFalse()
         {
-            var x = new XQuery(DbType);
-            Assert.IsFalse(x.IsConnectionOpened);
+            var xQuery = new XQuery(DbType);
+            Assert.IsFalse(xQuery.IsConnectionOpened);
         }
 
         [Test]
         public void TestInitialStateOfIsTransactionModeIsFalse()
         {
-            var x = new XQuery(DbType);
-            Assert.IsFalse(x.IsInTransactionMode);
+            var xQuery = new XQuery(DbType);
+            Assert.IsFalse(xQuery.IsInTransactionMode);
         }
 
         [Test]
         public void TestInitialStateOfDbTypeEqualsToSpecifiedOne()
         {
-            var x = new XQuery(DbType);
-            Assert.AreEqual(DbType, x.CurrentXDatabaseType);
+            var xQuery = new XQuery(DbType);
+            Assert.AreEqual(DbType, xQuery.CurrentXDatabaseType);
         }
     }
 }

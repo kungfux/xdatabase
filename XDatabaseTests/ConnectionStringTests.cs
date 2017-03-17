@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+using System;
 using NUnit.Framework;
 using XDatabase;
 
@@ -25,17 +26,27 @@ namespace XDatabaseTests
         public const XDatabaseType DbType = XDatabaseType.SqLite;
 
         [Test]
-        public void TestConnectionStringIsAcceptedInCaseSuccessfullConnection()
+        public void TestConnectionStringIsAcceptedInCaseSuccessfulConnection()
         {
-            var x = new XQuery(DbType) {ConnectionString = SqliteConnectionString};
-            Assert.AreEqual(SqliteConnectionString, x.ConnectionString);
+            var xQuery = new XQuery(DbType) {ConnectionString = SqliteConnectionString};
+            Assert.AreEqual(SqliteConnectionString, xQuery.ConnectionString);
+        }
+
+        [Test]
+        public void TestConnectionStringIsRejectedInCaseNoSuccessfulConnection()
+        {
+            var xQuery = new XQuery(DbType)
+            {
+                ConnectionString = $"Data Source={Guid.NewGuid()};FailIfMissing=true;"
+            };
+            Assert.IsNull(xQuery.ConnectionString);
         }
 
         [Test]
         public void TestNoActiveConnectionAfterDefiningConnectionString()
         {
-            var x = new XQuery(DbType) {ConnectionString = SqliteConnectionString};
-            Assert.IsFalse(x.IsConnectionOpened);
+            var xQuery = new XQuery(DbType) {ConnectionString = SqliteConnectionString};
+            Assert.IsFalse(xQuery.IsConnectionOpened);
         }
     }
 }

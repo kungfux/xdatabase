@@ -62,22 +62,6 @@ namespace XDatabase
             }
         }
 
-        //public byte[] SelectBinaryDataFromCell(string sqlQuery, params DbParameter[] args)
-        //{
-        //    ClearError();
-
-        //    try
-        //    {
-        //        var fileBytes = SelectCell<byte[]>(sqlQuery, args);
-        //        return fileBytes;
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        RegisterError(ex.Message);
-        //        return null;
-        //    }
-        //}
-
         public Image SelectBinaryDataFromCellAsImage(string sqlQuery, params DbParameter[] args)
         {
             ClearError();
