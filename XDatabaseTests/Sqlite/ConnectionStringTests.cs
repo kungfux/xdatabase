@@ -22,29 +22,24 @@ namespace XDatabaseTests.Sqlite
 {
     public class ConnectionStringTests
     {
-        private const string SqliteConnectionString = "Data Source=:memory:";
-
         [Test]
         public void TestConnectionStringIsAcceptedInCaseSuccessfulConnection()
         {
-            var xQuery = new XQuerySqlite() {ConnectionString = SqliteConnectionString};
-            Assert.AreEqual(SqliteConnectionString, xQuery.ConnectionString);
+            var xQuery = new XQuerySqlite(SetUp.SqliteConnectionString);
+            Assert.AreEqual(SetUp.SqliteConnectionString, xQuery.ConnectionString);
         }
 
         [Test]
         public void TestConnectionStringIsRejectedInCaseNoSuccessfulConnection()
         {
-            var xQuery = new XQuerySqlite()
-            {
-                ConnectionString = $"Data Source={Guid.NewGuid()};FailIfMissing=true;"
-            };
+            var xQuery = new XQuerySqlite($"Data Source={Guid.NewGuid()};FailIfMissing=true;");
             Assert.IsNull(xQuery.ConnectionString);
         }
 
         [Test]
         public void TestNoActiveConnectionAfterDefiningConnectionString()
         {
-            var xQuery = new XQuerySqlite() {ConnectionString = SqliteConnectionString};
+            var xQuery = new XQuerySqlite(SetUp.SqliteConnectionString);
             Assert.IsFalse(xQuery.IsConnectionOpened);
         }
     }

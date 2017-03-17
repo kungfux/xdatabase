@@ -14,19 +14,10 @@
  * limitations under the License.
  */
 
-namespace XDatabase
+namespace XDatabaseTests.Sqlite
 {
-    public class XQueryMySql : XQuery
+    public static class SetUp
     {
-        public XQueryMySql()
-        {
-            CurrentXDatabaseType = XDatabaseType.MySql;
-        }
-
-        public XQueryMySql(string connectionString)
-        {
-            CurrentXDatabaseType = XDatabaseType.SqLite;
-            ConnectionString = connectionString;
-        }
+        public const string SqliteConnectionString = "Data Source=:memory:";
     }
 }

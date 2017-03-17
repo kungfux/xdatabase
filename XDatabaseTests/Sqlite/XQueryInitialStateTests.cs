@@ -21,8 +21,6 @@ namespace XDatabaseTests.Sqlite
 {
     public class XQueryInitialStateTests
     {
-        private const XDatabaseType DbType = XDatabaseType.SqLite;
-
         [Test]
         public void TestInitialStateOfErrorMessageIsNull()
         {

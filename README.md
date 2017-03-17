@@ -1,5 +1,4 @@
 [![Build status](https://ci.appveyor.com/api/projects/status/9ixq897elu0uut74?svg=true)](https://ci.appveyor.com/project/kungfux/xclass)
-[![Coverage status](https://github.com/kungfux/xdatabase/tree/feature_XDatabase/XDatabaseTestsCoverage/CoverageReport/badge_combined.svg)]
 
 # XDatabase
 

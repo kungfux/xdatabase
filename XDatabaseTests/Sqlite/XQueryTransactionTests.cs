@@ -21,8 +21,6 @@ namespace XDatabaseTests.Sqlite
 {
     public class XQueryTransactionTests
     {
-        private const string SqliteConnectionString = "Data Source=:memory:";
-
         [Test]
         public void TestTransactionFailsIfNoConnectionSpecified()
         {
@@ -41,7 +39,7 @@ namespace XDatabaseTests.Sqlite
         [Test]
         public void TestConnectionIsActiveAfterBeginTransaction()
         {
-            var xQuery = new XQuerySqlite() { ConnectionString = SqliteConnectionString };
+            var xQuery = new XQuerySqlite(SetUp.SqliteConnectionString);
             xQuery.BeginTransaction();
             Assert.IsTrue(xQuery.IsConnectionOpened);
         }
@@ -49,7 +47,7 @@ namespace XDatabaseTests.Sqlite
         [Test]
         public void TestConnectionIsClosedAfterCommit()
         {
-            var xQuery = new XQuerySqlite() { ConnectionString = SqliteConnectionString};
+            var xQuery = new XQuerySqlite(SetUp.SqliteConnectionString);
             xQuery.BeginTransaction();
             xQuery.CommitTransaction();
             Assert.IsFalse(xQuery.IsConnectionOpened);
@@ -58,7 +56,7 @@ namespace XDatabaseTests.Sqlite
         [Test]
         public void TestConnectionIsClosedAfterRollback()
         {
-            var xQuery = new XQuerySqlite() { ConnectionString = SqliteConnectionString };
+            var xQuery = new XQuerySqlite(SetUp.SqliteConnectionString);
             xQuery.BeginTransaction();
             xQuery.RollbackTransaction();
             Assert.IsFalse(xQuery.IsConnectionOpened);
@@ -67,7 +65,7 @@ namespace XDatabaseTests.Sqlite
         [Test]
         public void TestTransactionFlagIsBeingSet()
         {
-            var xQuery = new XQuerySqlite() { ConnectionString = SqliteConnectionString };
+            var xQuery = new XQuerySqlite(SetUp.SqliteConnectionString);
             xQuery.BeginTransaction();
             Assert.True(xQuery.IsInTransactionMode);
         }

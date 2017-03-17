@@ -22,5 +22,11 @@ namespace XDatabase
         {
             CurrentXDatabaseType = XDatabaseType.SqLite;
         }
+
+        public XQuerySqlite(string connectionString)
+        {
+            CurrentXDatabaseType = XDatabaseType.SqLite;
+            ConnectionString = connectionString;
+        }
     }
 }

@@ -25,8 +25,6 @@ namespace XDatabaseTests.Sqlite
 {
     public class XQueryBinaryDataTests
     {
-        private const string SqliteConnectionString = "Data Source=:memory:";
-
         [Test]
         public void TestInsertBinaryDataIntoCell()
         {
@@ -34,7 +32,7 @@ namespace XDatabaseTests.Sqlite
             const string sqlInsertBin = "insert into test (bin) values (@bin);";
             var binData = new byte[] { 1,0,1,1,0,1,1,0 };
             
-            var xQuery = new XQuerySqlite() {ConnectionString = SqliteConnectionString};
+            var xQuery = new XQuerySqlite(SetUp.SqliteConnectionString);
             xQuery.BeginTransaction();
             xQuery.ChangeData(sqlCreateTable);
             Assert.IsTrue(xQuery.InsertBinaryDataIntoCell(binData, sqlInsertBin, "@bin"));
@@ -47,7 +45,7 @@ namespace XDatabaseTests.Sqlite
             const string sqlInsertFile = "insert into test (bin) values (@bin);";
             var file = Assembly.GetExecutingAssembly().Location;
 
-            var xQuery = new XQuerySqlite() { ConnectionString = SqliteConnectionString };
+            var xQuery = new XQuerySqlite(SetUp.SqliteConnectionString);
             xQuery.BeginTransaction();
             xQuery.ChangeData(sqlCreateTable);
             Assert.IsTrue(xQuery.InsertFileIntoCell(file, sqlInsertFile, "@bin"));
@@ -60,7 +58,7 @@ namespace XDatabaseTests.Sqlite
             const string sqlInsertBin = "insert into test (bin) values (@bin);";
             var binData = new byte[] { 1, 0, 1, 1, 0, 1, 1, 0 };
 
-            var xQuery = new XQuerySqlite() { ConnectionString = SqliteConnectionString };
+            var xQuery = new XQuerySqlite(SetUp.SqliteConnectionString);
             xQuery.BeginTransaction();
             xQuery.ChangeData(sqlCreateTable);
             xQuery.InsertBinaryDataIntoCell(binData, sqlInsertBin, "@bin");
@@ -89,7 +87,7 @@ namespace XDatabaseTests.Sqlite
                 binary = memory.ToArray();
             }
 
-            var xQuery = new XQuerySqlite() { ConnectionString = SqliteConnectionString };
+            var xQuery = new XQuerySqlite(SetUp.SqliteConnectionString);
             xQuery.BeginTransaction();
             xQuery.ChangeData(sqlCreateTable);
             xQuery.InsertBinaryDataIntoCell(binary, sqlInsertImage, "@bin");
@@ -119,7 +117,7 @@ namespace XDatabaseTests.Sqlite
                 binary = memory.ToArray();
             }
 
-            var xQuery = new XQuerySqlite() { ConnectionString = SqliteConnectionString };
+            var xQuery = new XQuerySqlite(SetUp.SqliteConnectionString);
             xQuery.BeginTransaction();
             xQuery.ChangeData(sqlCreateTable);
             xQuery.InsertBinaryDataIntoCell(binary, sqlInsertImage, "@bin");

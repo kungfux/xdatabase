@@ -22,5 +22,11 @@ namespace XDatabase
         {
             CurrentXDatabaseType = XDatabaseType.OleDb;
         }
+
+        public XQueryOleDb(string connectionString)
+        {
+            CurrentXDatabaseType = XDatabaseType.SqLite;
+            ConnectionString = connectionString;
+        }
     }
 }
