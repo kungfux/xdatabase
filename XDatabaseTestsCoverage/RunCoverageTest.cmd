@@ -1,4 +1,4 @@
-:: Copyright 2010-2014 Fuks Alexander. Contacts: kungfux2010@gmail.com
+:: Copyright © Alexander Fuks 2017 <Alexander.V.Fuks@gmail.com>
 ::
 :: Licensed under the Apache License, Version 2.0 (the "License");
 :: you may not use this file except in compliance with the License.
@@ -13,26 +13,43 @@
 :: limitations under the License.
 
 
-:: This cmd perform test of code coverage by unit tests and then build html reports
-:: It is needed to install OpenCover, ReportGenerator and NUnit testing framework
+:: This cmd performs test of code coverage by unit tests and then builds html reports.
+:: Dependency: Please have installed OpenCover, ReportGenerator and NUnit console.
 ::   https://github.com/OpenCover/opencover/
-::   http://reportgenerator.codeplex.com/
-::   http://nunit.org/
+::   https://github.com/danielpalme/ReportGenerator/
+::   https://github.com/nunit/nunit-console/
 
 @echo off
-:: OpenCover location
+
+set OpenCoverConsoleWeb=https://github.com/OpenCover/opencover/releases
+set ReportGeneratorWeb=https://github.com/danielpalme/ReportGenerator/releases
+set NUnitConsoleWeb=https://github.com/nunit/nunit-console/releases/
+
 set OpenCoverConsole=%LOCALAPPDATA%\Apps\OpenCover\OpenCover.Console.exe
-if not exist "%OpenCoverConsole%" echo "OpenCover is not found. Please install or check its location." && goto :eof
+set ReportGenerator=%LOCALAPPDATA%\Apps\ReportGenerator\ReportGenerator.exe
+set NUnitConsole=C:\Program Files (x86)\NUnit.org\nunit-console\nunit3-console.exe
+
+:: Check OpenCover location
+if not exist "%OpenCoverConsole%" (
+	echo "OpenCover is not found. Please install from %OpenCoverConsoleWeb% or check its location." 
+	goto :eof
+	)
+
 :: ReportGenerator location
-set ReportGenerator=%LOCALAPPDATA%\Apps\ReportGenerator\bin\ReportGenerator.exe
-if not exist "%ReportGenerator%" echo "ReportGenerator is not found. Please install or check its location." && goto :eof
+if not exist "%ReportGenerator%" (
+	echo "ReportGenerator is not found. Please install from %ReportGeneratorWeb% or check its location."
+	goto :eof
+	)
+	
 :: NUnit location
-set NUnitConsole=C:\Program Files (x86)\NUnit 2.6.3\bin\nunit-console-x86.exe
-if not exist "%NUnitConsole%" echo "NUnitConsole is not found. Please install or check its location." && goto :eof
+if not exist "%NUnitConsole%" (
+	echo "NUnitConsole is not found. Please install from %NUnitConsole% or check its location."
+	goto :eof
+	)
 
 :: Perform code coverage test
-%OpenCoverConsole% "-register:user" "-target:%NUnitConsole%" "-targetdir:..\XclassTests.Database\bin\Release" "-targetargs:XclassTests.Database.dll /noshadow" "-output:.\TestsCodeCoverageResults.xml"
+%OpenCoverConsole% "-register:user" "-target:%NUnitConsole%" "-targetdir:..\XDatabaseTests\bin\Debug" "-targetargs:XDatabaseTests.dll" "-output:.\TestsCodeCoverageResults.xml"
 :: Build reports
-%ReportGenerator% "-reports:.\TestsCodeCoverageResults.xml" "-filters:-XclassTests*" "-targetdir:." "-reporttypes:html"
+%ReportGenerator% "-reports:.\TestsCodeCoverageResults.xml" "-filters:-XDatabaseTests*" "-targetdir:." "-reporttypes:html"
 :: Open report
 @start %cd%\index.htm

@@ -8,3 +8,5 @@ packages/*
 !packages/NUnit/README.md
 !packages/SQLite/README.md
 !packages/MySql/README.md
+/XDatabaseTestsCoverage/*
+!/XDatabaseTestsCoverage/RunCoverageTest.cmd
