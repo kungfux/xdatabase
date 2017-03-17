@@ -79,14 +79,14 @@
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Sqlite\SetUp.cs" />
-    <Compile Include="Sqlite\XQueryFieldsTests.cs" />
-    <Compile Include="MySql\XQueryMySqlTests.cs" />
-    <Compile Include="OleDb\XQueryOleDbTests.cs" />
-    <Compile Include="Sqlite\XQuerySimpleSelectTests.cs" />
-    <Compile Include="Sqlite\XQueryBinaryDataTests.cs" />
+    <Compile Include="Sqlite\FieldsTests.cs" />
+    <Compile Include="MySql\MySqlTests.cs" />
+    <Compile Include="OleDb\OleDbTests.cs" />
+    <Compile Include="Sqlite\SelectTests.cs" />
+    <Compile Include="Sqlite\BinaryDataTests.cs" />
     <Compile Include="Sqlite\ConnectionStringTests.cs" />
-    <Compile Include="Sqlite\XQueryInitialStateTests.cs" />
-    <Compile Include="Sqlite\XQueryTransactionTests.cs" />
+    <Compile Include="Sqlite\InitialStateTests.cs" />
+    <Compile Include="Sqlite\TransactionTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\XDatabase\XDatabase.csproj">

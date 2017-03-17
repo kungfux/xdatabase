@@ -19,7 +19,7 @@ using XDatabase;
 
 namespace XDatabaseTests.Sqlite
 {
-    public class XQueryTransactionTests
+    public class TransactionTests
     {
         [Test]
         public void TestTransactionFailsIfNoConnectionSpecified()

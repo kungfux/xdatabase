@@ -21,7 +21,7 @@ using XDatabase;
 
 namespace XDatabaseTests.Sqlite
 {
-    public class XQuerySimpleSelectTests
+    public class SelectTests
     {
         [Test]
         public void TestSelectTable()
@@ -89,6 +89,25 @@ namespace XDatabaseTests.Sqlite
             var xQuery = new XQuerySqlite(SetUp.SqliteConnectionString);
             var result = xQuery.SelectCell<double>("select 1.1;");
             Assert.AreEqual(1.1d, result);
+        }
+
+        [Test]
+        public void TestSelectCellReturnsDefaultValueOnError()
+        {
+            const string defValue = "default";
+            var xQuery = new XQuerySqlite(SetUp.SqliteConnectionString);
+            var result = xQuery.SelectCell("select 1.1;", defValue);
+            Assert.AreEqual(defValue, result);
+        }
+
+        [Test]
+        public void TestSelectCellReturnsValueIfNoErrors()
+        {
+            const string defValue = "default";
+            const string nonDefValue = "non default";
+            var xQuery = new XQuerySqlite(SetUp.SqliteConnectionString);
+            var result = xQuery.SelectCell($"select '{nonDefValue}';", defValue);
+            Assert.AreEqual(nonDefValue, result);
         }
 
         [Test]

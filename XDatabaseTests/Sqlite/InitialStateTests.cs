@@ -19,7 +19,7 @@ using XDatabase;
 
 namespace XDatabaseTests.Sqlite
 {
-    public class XQueryInitialStateTests
+    public class InitialStateTests
     {
         [Test]
         public void TestInitialStateOfErrorMessageIsNull()
@@ -60,7 +60,7 @@ namespace XDatabaseTests.Sqlite
         public void TestInitialStateOfDbTypeEqualsToSpecifiedOne()
         {
             var xQuery = new XQuerySqlite();
-            Assert.AreEqual(DbType, xQuery.CurrentXDatabaseType);
+            Assert.AreEqual(XDatabaseType.SqLite, xQuery.CurrentXDatabaseType);
         }
     }
 }

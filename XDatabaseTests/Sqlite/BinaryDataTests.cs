@@ -23,7 +23,7 @@ using XDatabase;
 
 namespace XDatabaseTests.Sqlite
 {
-    public class XQueryBinaryDataTests
+    public class BinaryDataTests
     {
         [Test]
         public void TestInsertBinaryDataIntoCell()

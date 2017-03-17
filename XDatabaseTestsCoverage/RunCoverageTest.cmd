@@ -51,8 +51,8 @@ if not exist "%NUnitConsole%" (
 
 :: Perform code coverage test
 mkdir %ReportPath%
-%OpenCoverConsole% "-register:user" "-target:%NUnitConsole%" "-targetdir:..\XDatabaseTests\bin\Debug" "-targetargs:XDatabaseTests.dll" "-output:.\%ReportPath%\TestsCodeCoverageResults.xml"
+%OpenCoverConsole% "-register:user" "-target:%NUnitConsole%" "-targetdir:..\XDatabaseTests\bin\Debug" "-targetargs:XDatabaseTests.dll"  "-output:.\%ReportPath%\TestsCodeCoverageResults.xml"
 :: Build reports
-%ReportGenerator% "-reports:.\%ReportPath%\TestsCodeCoverageResults.xml" "-filters:-XDatabaseTests*" "-targetdir:.\%ReportPath%" "-reporttypes:html" "-reporttypes:Badges"
+%ReportGenerator% "-reports:.\%ReportPath%\TestsCodeCoverageResults.xml" "-filters:-XDatabaseTests*" "-targetdir:.\%ReportPath%" "-reporttypes:Html;Badges"
 :: Open report
 @start %cd%\%ReportPath%\index.htm

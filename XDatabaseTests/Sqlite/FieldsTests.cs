@@ -14,20 +14,29 @@
  * limitations under the License.
  */
 
+using System;
 using NUnit.Framework;
 using XDatabase;
 
-namespace XDatabaseTests.MySql
+namespace XDatabaseTests.Sqlite
 {
-    public class XQueryMySqlTests
+    public class FieldsTests
     {
         [Test]
-        public void TestMySqlInstanceCanBeCreated()
+        public void TestTimeoutCanBeChanges()
         {
-            const string paramValue = "value";
-            var xQuery = new XQueryMySql();
-            var param = xQuery.AddParameter("@test", paramValue);
-            Assert.AreEqual(paramValue, param.Value);
+            var timeout = (int)TimeSpan.FromSeconds(10).TotalMilliseconds;
+            var xQuery = new XQuerySqlite {Timeout = timeout};
+            Assert.AreEqual(timeout, xQuery.Timeout);
+        }
+
+        [Test]
+        public void TestTimeoutCannotBeSetToZero()
+        {
+            var xQuery = new XQuerySqlite();
+            var defaultTimeout = xQuery.Timeout;
+            xQuery.Timeout = 0;
+            Assert.AreEqual(defaultTimeout, xQuery.Timeout);
         }
     }
 }

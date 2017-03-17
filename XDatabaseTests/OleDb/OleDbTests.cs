@@ -19,7 +19,7 @@ using XDatabase;
 
 namespace XDatabaseTests.OleDb
 {
-    public class XQueryOleDbTests
+    public class OleDbTests
     {
         [Test]
         public void TestOleDbInstanceCanBeCreated()
