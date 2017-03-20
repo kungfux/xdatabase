@@ -1,11 +1,10 @@
-<?xml version="1.0"?>
-<package >
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
   <metadata>
     <id>XDatabase</id>
-	<title>XDatabase</title>
     <version>2.0.0-alpha</version>
-    <authors>Alexander Fuks</authors>
-    <owners>Alexander Fuks</owners>
+    <authors>kungfux</authors>
+    <owners>kungfux</owners>
     <licenseUrl>https://www.apache.org/licenses/LICENSE-2.0</licenseUrl>
     <projectUrl>https://github.com/kungfux/xdatabase</projectUrl>
     <iconUrl>https://cloud.githubusercontent.com/assets/10548881/24018440/ea78b658-0aa4-11e7-860b-e2326e80d88c.png</iconUrl>
@@ -16,7 +15,7 @@
     <tags>XDatabase SQLite MySQL MS Access Database OLE DB</tags>
     <dependencies>
       <dependency id="System.Data.SQLite.Core" version="1.0.104.0" />
-	  <dependency id="MySql.Data" version="6.9.9" />
+      <dependency id="MySql.Data" version="6.9.9" />
     </dependencies>
   </metadata>
   <files>
