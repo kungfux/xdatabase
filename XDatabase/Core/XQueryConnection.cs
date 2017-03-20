@@ -16,9 +16,9 @@
 
 using System;
 
-namespace XDatabase
+namespace XDatabase.Core
 {
-    public partial class XQuery
+    public abstract partial class XQuery
     {
         private bool CheckIsConnectionCanBeEstablished(string connectionString)
         {

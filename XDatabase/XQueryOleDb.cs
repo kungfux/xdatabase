@@ -14,15 +14,21 @@
  * limitations under the License.
  */
 
+using XDatabase.Core;
+
 namespace XDatabase
 {
-    public partial class XQuery
+    public class XQueryOleDb : XQuery
     {
-        public enum XResult
+        public XQueryOleDb()
         {
-            Error = -1,
-            NothingChanged = 0,
-            ChangesApplied = 1
+            CurrentXDatabaseType = XDatabaseType.OleDb;
+        }
+
+        public XQueryOleDb(string connectionString)
+        {
+            CurrentXDatabaseType = XDatabaseType.SqLite;
+            ConnectionString = connectionString;
         }
     }
 }

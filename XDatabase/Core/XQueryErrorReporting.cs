@@ -14,19 +14,28 @@
  * limitations under the License.
  */
 
-namespace XDatabase
+namespace XDatabase.Core
 {
-    public class XQuerySqlite : XQuery
+    public abstract partial class XQuery
     {
-        public XQuerySqlite()
+        public string ErrorMessage { get; private set; }
+
+        public delegate void ErrorEventHandler(string pErrorMessage);
+        public event ErrorEventHandler OnError;
+       
+        private void RegisterError(string message)
         {
-            CurrentXDatabaseType = XDatabaseType.SqLite;
+            ErrorMessage = message;
+
+            if (OnError != null)
+            {
+                OnError(ErrorMessage);
+            }
         }
 
-        public XQuerySqlite(string connectionString)
+        private void ClearError()
         {
-            CurrentXDatabaseType = XDatabaseType.SqLite;
-            ConnectionString = connectionString;
+            ErrorMessage = null;
         }
     }
 }

@@ -14,16 +14,18 @@
  * limitations under the License.
  */
 
+using XDatabase.Core;
+
 namespace XDatabase
 {
-    public class XQueryOleDb : XQuery
+    public class XQuerySqlite : XQuery
     {
-        public XQueryOleDb()
+        public XQuerySqlite()
         {
-            CurrentXDatabaseType = XDatabaseType.OleDb;
+            CurrentXDatabaseType = XDatabaseType.SqLite;
         }
 
-        public XQueryOleDb(string connectionString)
+        public XQuerySqlite(string connectionString)
         {
             CurrentXDatabaseType = XDatabaseType.SqLite;
             ConnectionString = connectionString;

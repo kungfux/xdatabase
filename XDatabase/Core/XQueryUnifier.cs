@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-using MySql.Data.MySqlClient;
 using System.Data.Common;
 using System.Data.OleDb;
 using System.Data.SQLite;
+using MySql.Data.MySqlClient;
 
-namespace XDatabase
+namespace XDatabase.Core
 {
-    public partial class XQuery
+    public abstract partial class XQuery
     {
         public DbParameter AddParameter(string parameterName, object value)
         {

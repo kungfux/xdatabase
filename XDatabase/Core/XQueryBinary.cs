@@ -19,9 +19,9 @@ using System.Data.Common;
 using System.Drawing;
 using System.IO;
 
-namespace XDatabase
+namespace XDatabase.Core
 {
-    public partial class XQuery
+    public abstract partial class XQuery
     {
         public bool InsertBinaryDataIntoCell(byte[] binaryData, string sqlQuery, string argumentNameWithBinaryData)
         {

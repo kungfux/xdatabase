@@ -18,9 +18,9 @@ using System;
 using System.Data;
 using System.Data.Common;
 
-namespace XDatabase
+namespace XDatabase.Core
 {
-    public partial class XQuery
+    public abstract partial class XQuery
     {
         public DataTable SelectTable(string sqlQuery, params DbParameter[] args)
         {

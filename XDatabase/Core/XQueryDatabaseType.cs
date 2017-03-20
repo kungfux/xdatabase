@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-namespace XDatabase
+namespace XDatabase.Core
 {
     public enum XDatabaseType
     {

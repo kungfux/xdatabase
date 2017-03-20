@@ -17,9 +17,9 @@
 using System;
 using System.Data.Common;
 
-namespace XDatabase
+namespace XDatabase.Core
 {
-    public partial class XQuery
+    public abstract partial class XQuery
     {
         private DbTransaction _transaction;
 

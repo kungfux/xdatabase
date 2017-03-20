@@ -14,28 +14,15 @@
  * limitations under the License.
  */
 
-namespace XDatabase
+namespace XDatabase.Core
 {
-    public partial class XQuery
+    public abstract partial class XQuery
     {
-        public string ErrorMessage { get; private set; }
-
-        public delegate void ErrorEventHandler(string pErrorMessage);
-        public event ErrorEventHandler OnError;
-       
-        private void RegisterError(string message)
+        public enum XResult
         {
-            ErrorMessage = message;
-
-            if (OnError != null)
-            {
-                OnError(ErrorMessage);
-            }
-        }
-
-        private void ClearError()
-        {
-            ErrorMessage = null;
+            Error = -1,
+            NothingChanged = 0,
+            ChangesApplied = 1
         }
     }
 }

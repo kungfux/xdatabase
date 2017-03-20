@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+using XDatabase.Core;
+
 namespace XDatabase
 {
     public class XQueryMySql : XQuery
