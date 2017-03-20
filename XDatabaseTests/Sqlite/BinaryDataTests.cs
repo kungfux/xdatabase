@@ -34,7 +34,7 @@ namespace XDatabaseTests.Sqlite
             
             var xQuery = new XQuerySqlite(SetUp.SqliteConnectionString);
             xQuery.BeginTransaction();
-            xQuery.ChangeData(sqlCreateTable);
+            xQuery.Insert(sqlCreateTable);
             Assert.IsTrue(xQuery.InsertBinaryDataIntoCell(binData, sqlInsertBin, "@bin"));
         }
 
@@ -47,7 +47,7 @@ namespace XDatabaseTests.Sqlite
 
             var xQuery = new XQuerySqlite(SetUp.SqliteConnectionString);
             xQuery.BeginTransaction();
-            xQuery.ChangeData(sqlCreateTable);
+            xQuery.Insert(sqlCreateTable);
             Assert.IsTrue(xQuery.InsertFileIntoCell(file, sqlInsertFile, "@bin"));
         }
 
@@ -60,7 +60,7 @@ namespace XDatabaseTests.Sqlite
 
             var xQuery = new XQuerySqlite(SetUp.SqliteConnectionString);
             xQuery.BeginTransaction();
-            xQuery.ChangeData(sqlCreateTable);
+            xQuery.Insert(sqlCreateTable);
             xQuery.InsertBinaryDataIntoCell(binData, sqlInsertBin, "@bin");
             var result = xQuery.SelectCell<byte[]>("select bin from test");
             Assert.AreEqual(binData, result);
@@ -89,7 +89,7 @@ namespace XDatabaseTests.Sqlite
 
             var xQuery = new XQuerySqlite(SetUp.SqliteConnectionString);
             xQuery.BeginTransaction();
-            xQuery.ChangeData(sqlCreateTable);
+            xQuery.Update(sqlCreateTable);
             xQuery.InsertBinaryDataIntoCell(binary, sqlInsertImage, "@bin");
             var retrivedImage = xQuery.SelectBinaryDataFromCellAsImage(sqlSelectImage);
             Assert.AreEqual(100, retrivedImage.Size.Width);
@@ -119,7 +119,7 @@ namespace XDatabaseTests.Sqlite
 
             var xQuery = new XQuerySqlite(SetUp.SqliteConnectionString);
             xQuery.BeginTransaction();
-            xQuery.ChangeData(sqlCreateTable);
+            xQuery.Update(sqlCreateTable);
             xQuery.InsertBinaryDataIntoCell(binary, sqlInsertImage, "@bin");
             File.Delete(fileName);
             var result = xQuery.SelectBinaryDataFromCellAndSaveToFile(fileName, sqlSelectImage);

@@ -14,21 +14,10 @@
  * limitations under the License.
  */
 
-using XDatabase.Core;
-
-namespace XDatabase
+namespace XDatabase.Core
 {
-    public class XQuerySqlite : XQuery
+    public abstract partial class XQuery
     {
-        public XQuerySqlite()
-        {
-            TargetedDatabaseType = XDatabaseType.SqLite;
-        }
-
-        public XQuerySqlite(string connectionString)
-        {
-            TargetedDatabaseType = XDatabaseType.SqLite;
-            ConnectionString = connectionString;
-        }
+        public XDatabaseType TargetedDatabaseType { get; internal set; }
     }
 }

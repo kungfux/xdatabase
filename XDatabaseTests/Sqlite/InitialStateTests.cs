@@ -47,7 +47,7 @@ namespace XDatabaseTests.Sqlite
         public void TestInitialStateOfIsActiveConnectionIsFalse()
         {
             var xQuery = new XQuerySqlite();
-            Assert.IsFalse(xQuery.IsConnectionOpened);
+            Assert.IsFalse(xQuery.IsConnectionActive);
         }
 
         [Test]
@@ -61,7 +61,7 @@ namespace XDatabaseTests.Sqlite
         public void TestInitialStateOfDbTypeEqualsToSpecifiedOne()
         {
             var xQuery = new XQuerySqlite();
-            Assert.AreEqual(XDatabaseType.SqLite, xQuery.CurrentXDatabaseType);
+            Assert.AreEqual(XDatabaseType.SqLite, xQuery.TargetedDatabaseType);
         }
     }
 }

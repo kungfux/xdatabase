@@ -28,14 +28,14 @@ namespace XDatabase.Core
             var tableResults = new DataTable();
             try
             {
-                if (!IsConnectionOpened)
+                if (!IsConnectionActive)
                 {
                     OpenConnection();
                 }
                 using (var adapter = GetDataAdapter())
                 {
                     var command = GetCommand();
-                    command.Connection = _connection;
+                    command.Connection = Connection;
                     command.CommandText = sqlQuery;
                     command.CommandTimeout = Timeout;
 
@@ -87,25 +87,22 @@ namespace XDatabase.Core
             {
                 return (T)table.Rows[0].ItemArray[0];
             }
-            else
+
+            if (table != null && 
+                table.Rows.Count == 1 && 
+                table.Columns.Count == 1)
             {
-                if (table != null && 
-                    table.Rows.Count == 1 && 
-                    table.Columns.Count == 1)
-                {
-                    throw new FormatException($"Type of the cell is not equals to specified type of T. Type of cell equals to {table.Rows[0].ItemArray[0].GetType()}.");
-                }
-                else if (table != null && 
-                    (table.Rows.Count != 1 || 
-                    table.Columns.Count != 1))
-                {
-                    throw new DataException($"It is expected that query will return 1x1 size table but was returned {table.Rows.Count}x{table.Columns.Count}.");
-                }
-                else
-                {
-                    throw new DataException("It is expected that query will return 1x1 size table but empty result was returned.");
-                }
+                throw new FormatException($"Type of the cell is not equals to specified type of T. Type of cell equals to {table.Rows[0].ItemArray[0].GetType()}.");
             }
+
+            if (table != null && 
+                (table.Rows.Count != 1 || 
+                 table.Columns.Count != 1))
+            {
+                throw new DataException($"It is expected that query will return 1x1 size table but was returned {table.Rows.Count}x{table.Columns.Count}.");
+            }
+
+            throw new DataException("It is expected that query will return 1x1 size table but empty result was returned.");
         }
 
         public T SelectCell<T>(string sqlQuery, T defaultValue = default(T), params DbParameter[] args)

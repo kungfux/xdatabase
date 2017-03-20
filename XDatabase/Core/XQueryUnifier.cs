@@ -33,7 +33,7 @@ namespace XDatabase.Core
 
         private DbParameter GetParameter()
         {
-            switch (CurrentXDatabaseType)
+            switch (TargetedDatabaseType)
             {
                 case XDatabaseType.MySql:
                     return new MySqlParameter();
@@ -46,7 +46,7 @@ namespace XDatabase.Core
 
         private DbConnection GetConnection()
         {
-            switch (CurrentXDatabaseType)
+            switch (TargetedDatabaseType)
             {
                 case XDatabaseType.MySql:
                     return new MySqlConnection();
@@ -59,7 +59,7 @@ namespace XDatabase.Core
 
         private DbDataAdapter GetDataAdapter()
         {
-            switch (CurrentXDatabaseType)
+            switch (TargetedDatabaseType)
             {
                 case XDatabaseType.MySql:
                     return new MySqlDataAdapter();
@@ -72,7 +72,7 @@ namespace XDatabase.Core
 
         private DbCommand GetCommand()
         {
-            switch (CurrentXDatabaseType)
+            switch (TargetedDatabaseType)
             {
                 case XDatabaseType.MySql:
                     return new MySqlCommand();

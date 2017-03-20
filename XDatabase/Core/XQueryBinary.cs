@@ -33,7 +33,7 @@ namespace XDatabase.Core
                 parameter.ParameterName = argumentNameWithBinaryData;
                 parameter.Value = binaryData;
 
-                return ChangeData(sqlQuery, parameter) > 0;
+                return Update(sqlQuery, parameter) > 0;
             }
             catch (Exception ex)
             {
