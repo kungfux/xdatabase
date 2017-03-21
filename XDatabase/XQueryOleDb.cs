@@ -22,12 +22,12 @@ namespace XDatabase
     {
         public XQueryOleDb()
         {
-            TargetedDatabaseType = XDatabaseType.OleDb;
+            TargetedDatabaseType = DatabaseType.OleDb;
         }
 
         public XQueryOleDb(string connectionString)
         {
-            TargetedDatabaseType = XDatabaseType.SqLite;
+            TargetedDatabaseType = DatabaseType.Sqlite;
             ConnectionString = connectionString;
         }
     }

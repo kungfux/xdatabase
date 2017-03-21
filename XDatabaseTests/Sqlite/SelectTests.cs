@@ -158,7 +158,7 @@ namespace XDatabaseTests.Sqlite
                 // ignored
             }
 
-            Assert.IsNotEmpty(xQuery.ErrorMessage);
+            Assert.IsNotEmpty(xQuery.LastErrorMessage);
         }
 
         private void XQuery_OnError(string pErrorMessage)

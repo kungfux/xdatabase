@@ -23,7 +23,7 @@ namespace XDatabase.Core
 {
     public abstract partial class XQuery
     {
-        public bool InsertBinaryDataIntoCell(byte[] binaryData, string sqlQuery, string argumentNameWithBinaryData)
+        public bool InsertBinaryIntoCell(byte[] binaryData, string sqlQuery, string argumentNameWithBinaryData)
         {
             ClearError();
 
@@ -53,7 +53,7 @@ namespace XDatabase.Core
                 fileStream.Read(fileBytes, 0, (int)fileStream.Length);
                 fileStream.Close();
 
-                return InsertBinaryDataIntoCell(fileBytes, sqlQuery, argumentNameWithFilePath);
+                return InsertBinaryIntoCell(fileBytes, sqlQuery, argumentNameWithFilePath);
             }
             catch (Exception ex)
             {
@@ -62,7 +62,7 @@ namespace XDatabase.Core
             }
         }
 
-        public Image SelectBinaryDataFromCellAsImage(string sqlQuery, params DbParameter[] args)
+        public Image SelectBinaryAsImage(string sqlQuery, params DbParameter[] args)
         {
             ClearError();
 
@@ -80,7 +80,7 @@ namespace XDatabase.Core
             }
         }
 
-        public bool SelectBinaryDataFromCellAndSaveToFile(string outputFileName, string sqlQuery)
+        public bool SelectBinaryAndSave(string outputFileName, string sqlQuery)
         {
             ClearError();
 

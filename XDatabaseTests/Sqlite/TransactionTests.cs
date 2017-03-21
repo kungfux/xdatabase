@@ -26,7 +26,7 @@ namespace XDatabaseTests.Sqlite
         {
             var xQuery = new XQuerySqlite();
             Assert.IsFalse(xQuery.BeginTransaction());
-            Assert.IsNotNull(xQuery.ErrorMessage);
+            Assert.IsNotNull(xQuery.LastErrorMessage);
         }
 
         [Test]

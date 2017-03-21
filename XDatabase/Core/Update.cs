@@ -66,5 +66,10 @@ namespace XDatabase.Core
         {
             return Update(pSqlQuery, pDataArgs);
         }
+
+        public int Create(string pSqlQuery, params DbParameter[] pDataArgs)
+        {
+            return Update(pSqlQuery, pDataArgs);
+        }
     }
 }

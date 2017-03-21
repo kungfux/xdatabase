@@ -16,10 +16,26 @@
 
 namespace XDatabase.Core
 {
-    public enum XDatabaseType
+    public abstract partial class XQuery
     {
-        SqLite,
-        MySql,
-        OleDb
+        public string LastErrorMessage { get; private set; }
+
+        public delegate void ErrorEventHandler(string pErrorMessage);
+        public event ErrorEventHandler OnError;
+       
+        private void RegisterError(string message)
+        {
+            LastErrorMessage = message;
+
+            if (OnError != null)
+            {
+                OnError(LastErrorMessage);
+            }
+        }
+
+        private void ClearError()
+        {
+            LastErrorMessage = null;
+        }
     }
 }

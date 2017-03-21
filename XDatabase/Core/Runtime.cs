@@ -18,6 +18,6 @@ namespace XDatabase.Core
 {
     public abstract partial class XQuery
     {
-        public XDatabaseType TargetedDatabaseType { get; internal set; }
+        public DatabaseType TargetedDatabaseType { get; internal set; }
     }
 }
