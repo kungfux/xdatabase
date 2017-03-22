@@ -77,7 +77,7 @@ namespace XDatabase.Core
             return table != null && table.Columns.Count == 1 ? table.Columns[0] : null;
         }
 
-        public T SelectCell<T>(string sqlQuery, params DbParameter[] args)
+        public T SelectCellAs<T>(string sqlQuery, params DbParameter[] args)
         {
             var table = SelectTable(sqlQuery, args);
             if (table != null && 
@@ -105,7 +105,7 @@ namespace XDatabase.Core
             throw new DataException("It is expected that query will return 1x1 size table but empty result was returned.");
         }
 
-        public T SelectCell<T>(string sqlQuery, T defaultValue = default(T), params DbParameter[] args)
+        public T SelectCellAs<T>(string sqlQuery, T defaultValue = default(T), params DbParameter[] args)
         {
             var table = SelectTable(sqlQuery, args);
             if (table != null && table.Rows.Count == 1 && table.Columns.Count == 1 && table.Rows[0].ItemArray[0].GetType() == typeof(T))

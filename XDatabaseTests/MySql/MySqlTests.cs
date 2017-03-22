@@ -29,5 +29,13 @@ namespace XDatabaseTests.MySql
             var param = xQuery.AddParameter("@test", paramValue);
             Assert.AreEqual(paramValue, param.Value);
         }
+
+        [Test]
+        public void TestMySqlConnectionStringIsNullIfNotValid()
+        {
+            const string connectionString = "Source?";
+            var xQuery = new XQueryMySql(connectionString);
+            Assert.IsNull(xQuery.ConnectionString);
+        }
     }
 }

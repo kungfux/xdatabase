@@ -68,7 +68,7 @@ namespace XDatabase.Core
 
             try
             {
-                var fileBytes = SelectCell<byte[]>(sqlQuery, args);
+                var fileBytes = SelectCellAs<byte[]>(sqlQuery, args);
                 var memStream = new MemoryStream(fileBytes);
                 var image = Image.FromStream(memStream);
                 return image;
@@ -86,7 +86,7 @@ namespace XDatabase.Core
 
             try
             {
-                var fileBytes = SelectCell<byte[]>(sqlQuery);
+                var fileBytes = SelectCellAs<byte[]>(sqlQuery);
                 var newFileStream = new FileStream(outputFileName, FileMode.CreateNew);
                 newFileStream.Write(fileBytes, 0, fileBytes.Length);
                 newFileStream.Close();

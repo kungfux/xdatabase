@@ -29,5 +29,13 @@ namespace XDatabaseTests.OleDb
             var param = xQuery.AddParameter("@test", paramValue);
             Assert.AreEqual(paramValue, param.Value);
         }
+
+        [Test]
+        public void TestOleDbConnectionStringIsNullIfNotValid()
+        {
+            const string connectionString = "Source?";
+            var xQuery = new XQueryOleDb(connectionString);
+            Assert.IsNull(xQuery.ConnectionString);
+        }
     }
 }

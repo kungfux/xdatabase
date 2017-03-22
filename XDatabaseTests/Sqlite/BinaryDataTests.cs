@@ -62,7 +62,7 @@ namespace XDatabaseTests.Sqlite
             xQuery.BeginTransaction();
             xQuery.Insert(sqlCreateTable);
             xQuery.InsertBinaryIntoCell(binData, sqlInsertBin, "@bin");
-            var result = xQuery.SelectCell<byte[]>("select bin from test");
+            var result = xQuery.SelectCellAs<byte[]>("select bin from test");
             Assert.AreEqual(binData, result);
         }
 
