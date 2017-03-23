@@ -21,54 +21,19 @@ namespace XDatabase.Core
 {
     public abstract partial class XQuery
     {
+        public bool IsInTransactionMode => _transaction != null;
         private DbTransaction _transaction;
-
-        public int ChangeData(string pSqlQuery, params DbParameter[] pDataArgs)
-        {
-            ClearError();
-            try
-            {
-                if (!IsConnectionOpened)
-                {
-                    OpenConnection();
-                }
-                using (var command = GetCommand())
-                {
-                    command.Connection = _connection;
-                    command.CommandText = pSqlQuery;
-                    command.CommandTimeout = Timeout;
-
-                    if (pDataArgs != null)
-                    {
-                        foreach (var arg in pDataArgs)
-                        {
-                            command.Parameters.Add(arg);
-                        }
-                    }
-                    return command.ExecuteNonQuery();
-                }
-            }
-            catch (Exception ex)
-            {
-                RegisterError(ex.Message);
-                return -1;
-            }
-            finally
-            {
-                CloseConnection();
-            }
-        }
 
         public bool BeginTransaction()
         {
             ClearError();
             try
             {
-                if (!IsConnectionOpened)
+                if (!IsConnectionActive)
                 {
                     OpenConnection();
                 }
-                _transaction = _connection.BeginTransaction();
+                _transaction = Connection.BeginTransaction();
                 return true;
             }
             catch (Exception ex)

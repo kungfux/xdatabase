@@ -54,7 +54,7 @@ namespace XDatabaseTests.Sqlite
         public void TestArithmeticOperationWithSelectCell()
         {
             var xQuery = new XQuerySqlite(SetUp.SqliteConnectionString);
-            Assert.AreEqual(30, xQuery.SelectCell<long>("select 10+20;"));
+            Assert.AreEqual(30, xQuery.SelectCellAs<long>("select 10+20;"));
         }
 
         [Test]
@@ -71,7 +71,7 @@ namespace XDatabaseTests.Sqlite
         public void TestSelectCellCanReturnStringDataType()
         {
             var xQuery = new XQuerySqlite(SetUp.SqliteConnectionString);
-            var result = xQuery.SelectCell<string>("select 'asd';");
+            var result = xQuery.SelectCellAs<string>("select 'asd';");
             Assert.AreEqual("asd", result);
         }
 
@@ -79,7 +79,7 @@ namespace XDatabaseTests.Sqlite
         public void TestSelectCellCanReturnLongDataType()
         {
             var xQuery = new XQuerySqlite(SetUp.SqliteConnectionString);
-            var result = xQuery.SelectCell<long>("select 100;");
+            var result = xQuery.SelectCellAs<long>("select 100;");
             Assert.AreEqual(100L, result);
         }
 
@@ -87,7 +87,7 @@ namespace XDatabaseTests.Sqlite
         public void TestSelectCellCanReturnDoubleDataType()
         {
             var xQuery = new XQuerySqlite(SetUp.SqliteConnectionString);
-            var result = xQuery.SelectCell<double>("select 1.1;");
+            var result = xQuery.SelectCellAs<double>("select 1.1;");
             Assert.AreEqual(1.1d, result);
         }
 
@@ -96,7 +96,7 @@ namespace XDatabaseTests.Sqlite
         {
             const string defValue = "default";
             var xQuery = new XQuerySqlite(SetUp.SqliteConnectionString);
-            var result = xQuery.SelectCell("select 1.1;", defValue);
+            var result = xQuery.SelectCellAs("select 1.1;", defValue);
             Assert.AreEqual(defValue, result);
         }
 
@@ -106,7 +106,7 @@ namespace XDatabaseTests.Sqlite
             const string defValue = "default";
             const string nonDefValue = "non default";
             var xQuery = new XQuerySqlite(SetUp.SqliteConnectionString);
-            var result = xQuery.SelectCell($"select '{nonDefValue}';", defValue);
+            var result = xQuery.SelectCellAs($"select '{nonDefValue}';", defValue);
             Assert.AreEqual(nonDefValue, result);
         }
 
@@ -117,7 +117,7 @@ namespace XDatabaseTests.Sqlite
             var xQuery = new XQuerySqlite(SetUp.SqliteConnectionString);
             Assert.Throws(Is.TypeOf<FormatException>(), delegate
             {
-                xQuery.SelectCell<string>(sqlSelect);
+                xQuery.SelectCellAs<string>(sqlSelect);
             });
         }
 
@@ -128,7 +128,7 @@ namespace XDatabaseTests.Sqlite
             var xQuery = new XQuerySqlite(SetUp.SqliteConnectionString);
             Assert.Throws(Is.TypeOf<DataException>(), delegate
             {
-                xQuery.SelectCell<long>(sqlSelect);
+                xQuery.SelectCellAs<long>(sqlSelect);
             });
         }
 
@@ -139,7 +139,7 @@ namespace XDatabaseTests.Sqlite
             var xQuery = new XQuerySqlite(SetUp.SqliteConnectionString);
             Assert.Throws(Is.TypeOf<DataException>(), delegate
             {
-                xQuery.SelectCell<long>(sqlSelect);
+                xQuery.SelectCellAs<long>(sqlSelect);
             });
         }
 
@@ -151,14 +151,14 @@ namespace XDatabaseTests.Sqlite
             xQuery.OnError += XQuery_OnError;
             try
             {
-                xQuery.SelectCell<long>(sqlSelect);
+                xQuery.SelectCellAs<long>(sqlSelect);
             }
             catch (Exception)
             {
                 // ignored
             }
 
-            Assert.IsNotEmpty(xQuery.ErrorMessage);
+            Assert.IsNotEmpty(xQuery.LastErrorMessage);
         }
 
         private void XQuery_OnError(string pErrorMessage)

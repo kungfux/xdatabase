@@ -26,7 +26,7 @@ namespace XDatabaseTests.Sqlite
         {
             var xQuery = new XQuerySqlite();
             Assert.IsFalse(xQuery.BeginTransaction());
-            Assert.IsNotNull(xQuery.ErrorMessage);
+            Assert.IsNotNull(xQuery.LastErrorMessage);
         }
 
         [Test]
@@ -41,7 +41,7 @@ namespace XDatabaseTests.Sqlite
         {
             var xQuery = new XQuerySqlite(SetUp.SqliteConnectionString);
             xQuery.BeginTransaction();
-            Assert.IsTrue(xQuery.IsConnectionOpened);
+            Assert.IsTrue(xQuery.IsConnectionActive);
         }
 
         [Test]
@@ -50,7 +50,7 @@ namespace XDatabaseTests.Sqlite
             var xQuery = new XQuerySqlite(SetUp.SqliteConnectionString);
             xQuery.BeginTransaction();
             xQuery.CommitTransaction();
-            Assert.IsFalse(xQuery.IsConnectionOpened);
+            Assert.IsFalse(xQuery.IsConnectionActive);
         }
 
         [Test]
@@ -59,7 +59,7 @@ namespace XDatabaseTests.Sqlite
             var xQuery = new XQuerySqlite(SetUp.SqliteConnectionString);
             xQuery.BeginTransaction();
             xQuery.RollbackTransaction();
-            Assert.IsFalse(xQuery.IsConnectionOpened);
+            Assert.IsFalse(xQuery.IsConnectionActive);
         }
 
         [Test]

@@ -15,11 +15,56 @@
  */
 
 using System;
+using System.Data;
+using System.Data.Common;
 
 namespace XDatabase.Core
 {
     public abstract partial class XQuery
     {
+        public DbConnection Connection { get; private set; }
+
+        public string ConnectionString
+        {
+            get { return _connectionString; }
+            set
+            {
+                if (CheckIsConnectionCanBeEstablished(value))
+                {
+                    _connectionString = value;
+                }
+            }
+        }
+
+        public int Timeout
+        {
+            get { return _timeout; }
+            set
+            {
+                if (value > 0)
+                {
+                    _timeout = value;
+                }
+            }
+        }
+
+        public bool IsConnectionActive
+        {
+            get
+            {
+                if (Connection != null)
+                {
+                    return Connection.State == ConnectionState.Open ||
+                           Connection.State == ConnectionState.Executing ||
+                           Connection.State == ConnectionState.Fetching;
+                }
+                return false;
+            }
+        }
+
+        private string _connectionString;
+        private int _timeout = (int)TimeSpan.FromSeconds(30).TotalMilliseconds;
+
         private bool CheckIsConnectionCanBeEstablished(string connectionString)
         {
             ClearError();
@@ -45,11 +90,11 @@ namespace XDatabase.Core
         {
             ClearError();
 
-            _connection = GetConnection();
+            Connection = GetConnection();
             try
             {
-                _connection.ConnectionString = ConnectionString;
-                _connection.Open();
+                Connection.ConnectionString = ConnectionString;
+                Connection.Open();
             }
             catch (Exception ex)
             {
@@ -59,9 +104,9 @@ namespace XDatabase.Core
 
         private void CloseConnection()
         {
-            if (_connection != null && !IsInTransactionMode)
+            if (Connection != null && !IsInTransactionMode)
             {
-                _connection.Close();
+                Connection.Close();
             }
         }
     }

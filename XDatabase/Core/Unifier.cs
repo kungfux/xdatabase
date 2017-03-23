@@ -33,11 +33,11 @@ namespace XDatabase.Core
 
         private DbParameter GetParameter()
         {
-            switch (CurrentXDatabaseType)
+            switch (TargetedDatabaseType)
             {
-                case XDatabaseType.MySql:
+                case DatabaseType.MySql:
                     return new MySqlParameter();
-                case XDatabaseType.OleDb:
+                case DatabaseType.OleDb:
                     return new OleDbParameter();
                 default:
                     return new SQLiteParameter();
@@ -46,11 +46,11 @@ namespace XDatabase.Core
 
         private DbConnection GetConnection()
         {
-            switch (CurrentXDatabaseType)
+            switch (TargetedDatabaseType)
             {
-                case XDatabaseType.MySql:
+                case DatabaseType.MySql:
                     return new MySqlConnection();
-                case XDatabaseType.OleDb:
+                case DatabaseType.OleDb:
                     return new OleDbConnection();
                 default:
                     return new SQLiteConnection();
@@ -59,11 +59,11 @@ namespace XDatabase.Core
 
         private DbDataAdapter GetDataAdapter()
         {
-            switch (CurrentXDatabaseType)
+            switch (TargetedDatabaseType)
             {
-                case XDatabaseType.MySql:
+                case DatabaseType.MySql:
                     return new MySqlDataAdapter();
-                case XDatabaseType.OleDb:
+                case DatabaseType.OleDb:
                     return new OleDbDataAdapter();
                 default:
                     return new SQLiteDataAdapter();
@@ -72,11 +72,11 @@ namespace XDatabase.Core
 
         private DbCommand GetCommand()
         {
-            switch (CurrentXDatabaseType)
+            switch (TargetedDatabaseType)
             {
-                case XDatabaseType.MySql:
+                case DatabaseType.MySql:
                     return new MySqlCommand();
-                case XDatabaseType.OleDb:
+                case DatabaseType.OleDb:
                     return new OleDbCommand();
                 default:
                     return new SQLiteCommand();

@@ -34,8 +34,8 @@ namespace XDatabaseTests.Sqlite
             
             var xQuery = new XQuerySqlite(SetUp.SqliteConnectionString);
             xQuery.BeginTransaction();
-            xQuery.ChangeData(sqlCreateTable);
-            Assert.IsTrue(xQuery.InsertBinaryDataIntoCell(binData, sqlInsertBin, "@bin"));
+            xQuery.Insert(sqlCreateTable);
+            Assert.IsTrue(xQuery.InsertBinaryIntoCell(binData, sqlInsertBin, "@bin"));
         }
 
         [Test]
@@ -47,7 +47,7 @@ namespace XDatabaseTests.Sqlite
 
             var xQuery = new XQuerySqlite(SetUp.SqliteConnectionString);
             xQuery.BeginTransaction();
-            xQuery.ChangeData(sqlCreateTable);
+            xQuery.Insert(sqlCreateTable);
             Assert.IsTrue(xQuery.InsertFileIntoCell(file, sqlInsertFile, "@bin"));
         }
 
@@ -60,9 +60,9 @@ namespace XDatabaseTests.Sqlite
 
             var xQuery = new XQuerySqlite(SetUp.SqliteConnectionString);
             xQuery.BeginTransaction();
-            xQuery.ChangeData(sqlCreateTable);
-            xQuery.InsertBinaryDataIntoCell(binData, sqlInsertBin, "@bin");
-            var result = xQuery.SelectCell<byte[]>("select bin from test");
+            xQuery.Insert(sqlCreateTable);
+            xQuery.InsertBinaryIntoCell(binData, sqlInsertBin, "@bin");
+            var result = xQuery.SelectCellAs<byte[]>("select bin from test");
             Assert.AreEqual(binData, result);
         }
 
@@ -89,9 +89,9 @@ namespace XDatabaseTests.Sqlite
 
             var xQuery = new XQuerySqlite(SetUp.SqliteConnectionString);
             xQuery.BeginTransaction();
-            xQuery.ChangeData(sqlCreateTable);
-            xQuery.InsertBinaryDataIntoCell(binary, sqlInsertImage, "@bin");
-            var retrivedImage = xQuery.SelectBinaryDataFromCellAsImage(sqlSelectImage);
+            xQuery.Update(sqlCreateTable);
+            xQuery.InsertBinaryIntoCell(binary, sqlInsertImage, "@bin");
+            var retrivedImage = xQuery.SelectBinaryAsImage(sqlSelectImage);
             Assert.AreEqual(100, retrivedImage.Size.Width);
         }
 
@@ -119,10 +119,10 @@ namespace XDatabaseTests.Sqlite
 
             var xQuery = new XQuerySqlite(SetUp.SqliteConnectionString);
             xQuery.BeginTransaction();
-            xQuery.ChangeData(sqlCreateTable);
-            xQuery.InsertBinaryDataIntoCell(binary, sqlInsertImage, "@bin");
+            xQuery.Update(sqlCreateTable);
+            xQuery.InsertBinaryIntoCell(binary, sqlInsertImage, "@bin");
             File.Delete(fileName);
-            var result = xQuery.SelectBinaryDataFromCellAndSaveToFile(fileName, sqlSelectImage);
+            var result = xQuery.SelectBinaryAndSave(fileName, sqlSelectImage);
             Assert.IsTrue(result);
         }
     }
