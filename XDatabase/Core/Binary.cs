@@ -62,7 +62,7 @@ namespace XDatabase.Core
             }
         }
 
-        public Image SelectBinaryAsImage(string sqlQuery, params DbParameter[] args)
+        public Image SelectBinaryAsImage(string sqlQuery, params XParameter[] args)
         {
             ClearError();
 

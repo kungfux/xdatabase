@@ -62,7 +62,7 @@ namespace XDatabaseTests.Sqlite
         {
             var xQuery = new XQuerySqlite(SetUp.SqliteConnectionString);
             const string value = "asd";
-            var result = xQuery.SelectTable("select @a;", xQuery.AddParameter("@a", value))
+            var result = xQuery.SelectTable("select @a;", new XParameter("@a", value))
                 .Rows[0].ItemArray[0];
             Assert.AreEqual(result, value);
         }
