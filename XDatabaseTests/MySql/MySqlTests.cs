@@ -37,5 +37,12 @@ namespace XDatabaseTests.MySql
             var xQuery = new XQueryMySql(connectionString);
             Assert.IsNull(xQuery.ConnectionString);
         }
+
+        [Test]
+        public void TestInitialStateOfDbTypeEqualsToSpecifiedOne()
+        {
+            var xQuery = new XQueryMySql();
+            Assert.AreEqual(DatabaseType.MySql, xQuery.TargetedDatabaseType);
+        }
     }
 }

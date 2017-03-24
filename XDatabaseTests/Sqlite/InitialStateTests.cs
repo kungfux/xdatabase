@@ -16,7 +16,6 @@
 
 using NUnit.Framework;
 using XDatabase;
-using XDatabase.Core;
 
 namespace XDatabaseTests.Sqlite
 {

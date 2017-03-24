@@ -37,5 +37,12 @@ namespace XDatabaseTests.OleDb
             var xQuery = new XQueryOleDb(connectionString);
             Assert.IsNull(xQuery.ConnectionString);
         }
+
+        [Test]
+        public void TestInitialStateOfDbTypeEqualsToSpecifiedOne()
+        {
+            var xQuery = new XQueryOleDb();
+            Assert.AreEqual(DatabaseType.OleDb, xQuery.TargetedDatabaseType);
+        }
     }
 }

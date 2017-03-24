@@ -79,13 +79,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Core\Transaction.cs" />
+    <Compile Include="DatabaseType.cs" />
     <Compile Include="XQueryOleDb.cs" />
     <Compile Include="XQueryMySql.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Core\Select.cs" />
     <Compile Include="Core\Binary.cs" />
     <Compile Include="Core\Connection.cs" />
-    <Compile Include="Core\DatabaseType.cs" />
     <Compile Include="Core\Error.cs" />
     <Compile Include="Core\Runtime.cs" />
     <Compile Include="Core\Result.cs" />
