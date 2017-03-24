@@ -24,10 +24,8 @@ namespace XDatabaseTests.OleDb
         [Test]
         public void TestOleDbInstanceCanBeCreated()
         {
-            const string paramValue = "value";
             var xQuery = new XQueryOleDb();
-            var param = xQuery.AddParameter("@test", paramValue);
-            Assert.AreEqual(paramValue, param.Value);
+            Assert.AreEqual(DatabaseType.OleDb, xQuery.TargetedDatabaseType);
         }
 
         [Test]

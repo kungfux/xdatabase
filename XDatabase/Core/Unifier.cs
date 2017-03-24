@@ -23,14 +23,6 @@ namespace XDatabase.Core
 {
     public abstract partial class XQuery
     {
-        public DbParameter AddParameter(string parameterName, object value)
-        {
-            var newParam = GetParameter();
-            newParam.ParameterName = parameterName;
-            newParam.Value = value;
-            return newParam;
-        }
-
         private DbParameter GetParameter()
         {
             switch (TargetedDatabaseType)
@@ -41,6 +33,19 @@ namespace XDatabase.Core
                     return new OleDbParameter();
                 default:
                     return new SQLiteParameter();
+            }
+        }
+
+        private DbParameter GetParameter(string name, object value)
+        {
+            switch (TargetedDatabaseType)
+            {
+                case DatabaseType.MySql:
+                    return new MySqlParameter(name, value);
+                case DatabaseType.OleDb:
+                    return new OleDbParameter(name, value);
+                default:
+                    return new SQLiteParameter(name, value);
             }
         }
 

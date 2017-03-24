@@ -24,10 +24,8 @@ namespace XDatabaseTests.MySql
         [Test]
         public void TestMySqlInstanceCanBeCreated()
         {
-            const string paramValue = "value";
             var xQuery = new XQueryMySql();
-            var param = xQuery.AddParameter("@test", paramValue);
-            Assert.AreEqual(paramValue, param.Value);
+            Assert.AreEqual(DatabaseType.MySql, xQuery.TargetedDatabaseType);
         }
 
         [Test]

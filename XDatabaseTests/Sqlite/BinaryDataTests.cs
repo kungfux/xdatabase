@@ -34,7 +34,7 @@ namespace XDatabaseTests.Sqlite
             
             var xQuery = new XQuerySqlite(SetUp.SqliteConnectionString);
             xQuery.BeginTransaction();
-            xQuery.Insert(sqlCreateTable);
+            xQuery.Create(sqlCreateTable);
             Assert.IsTrue(xQuery.InsertBinaryIntoCell(binData, sqlInsertBin, "@bin"));
         }
 
@@ -47,7 +47,7 @@ namespace XDatabaseTests.Sqlite
 
             var xQuery = new XQuerySqlite(SetUp.SqliteConnectionString);
             xQuery.BeginTransaction();
-            xQuery.Insert(sqlCreateTable);
+            xQuery.Create(sqlCreateTable);
             Assert.IsTrue(xQuery.InsertFileIntoCell(file, sqlInsertFile, "@bin"));
         }
 
@@ -60,7 +60,7 @@ namespace XDatabaseTests.Sqlite
 
             var xQuery = new XQuerySqlite(SetUp.SqliteConnectionString);
             xQuery.BeginTransaction();
-            xQuery.Insert(sqlCreateTable);
+            xQuery.Create(sqlCreateTable);
             xQuery.InsertBinaryIntoCell(binData, sqlInsertBin, "@bin");
             var result = xQuery.SelectCellAs<byte[]>("select bin from test");
             Assert.AreEqual(binData, result);
@@ -89,7 +89,7 @@ namespace XDatabaseTests.Sqlite
 
             var xQuery = new XQuerySqlite(SetUp.SqliteConnectionString);
             xQuery.BeginTransaction();
-            xQuery.Update(sqlCreateTable);
+            xQuery.Create(sqlCreateTable);
             xQuery.InsertBinaryIntoCell(binary, sqlInsertImage, "@bin");
             var retrivedImage = xQuery.SelectBinaryAsImage(sqlSelectImage);
             Assert.AreEqual(100, retrivedImage.Size.Width);
@@ -119,7 +119,7 @@ namespace XDatabaseTests.Sqlite
 
             var xQuery = new XQuerySqlite(SetUp.SqliteConnectionString);
             xQuery.BeginTransaction();
-            xQuery.Update(sqlCreateTable);
+            xQuery.Create(sqlCreateTable);
             xQuery.InsertBinaryIntoCell(binary, sqlInsertImage, "@bin");
             File.Delete(fileName);
             var result = xQuery.SelectBinaryAndSave(fileName, sqlSelectImage);

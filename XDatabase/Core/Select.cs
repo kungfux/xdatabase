@@ -16,13 +16,12 @@
 
 using System;
 using System.Data;
-using System.Data.Common;
 
 namespace XDatabase.Core
 {
     public abstract partial class XQuery
     {
-        public DataTable SelectTable(string sqlQuery, params DbParameter[] args)
+        public DataTable SelectTable(string sqlQuery, params XParameter[] args)
         {
             ClearError();
             var tableResults = new DataTable();
@@ -47,7 +46,8 @@ namespace XDatabase.Core
                     {
                         foreach (var arg in args)
                         {
-                            adapter.SelectCommand.Parameters.Add(arg);
+                            var parameter = GetParameter(arg.ParameterName, arg.Value);
+                            adapter.SelectCommand.Parameters.Add(parameter);
                         }
                     }
                     adapter.Fill(tableResults);
@@ -65,19 +65,19 @@ namespace XDatabase.Core
             }
         }
 
-        public DataRow SelectRow(string sqlQuery, params DbParameter[] args)
+        public DataRow SelectRow(string sqlQuery, params XParameter[] args)
         {
             var table = SelectTable(sqlQuery, args);
             return table != null && table.Rows.Count == 1 ? table.Rows[0] : null;
         }
 
-        public DataColumn SelectColumn(string sqlQuery, params DbParameter[] args)
+        public DataColumn SelectColumn(string sqlQuery, params XParameter[] args)
         {
             var table = SelectTable(sqlQuery, args);
             return table != null && table.Columns.Count == 1 ? table.Columns[0] : null;
         }
 
-        public T SelectCellAs<T>(string sqlQuery, params DbParameter[] args)
+        public T SelectCellAs<T>(string sqlQuery, params XParameter[] args)
         {
             var table = SelectTable(sqlQuery, args);
             if (table != null && 
@@ -105,7 +105,7 @@ namespace XDatabase.Core
             throw new DataException("It is expected that query will return 1x1 size table but empty result was returned.");
         }
 
-        public T SelectCellAs<T>(string sqlQuery, T defaultValue = default(T), params DbParameter[] args)
+        public T SelectCellAs<T>(string sqlQuery, T defaultValue = default(T), params XParameter[] args)
         {
             var table = SelectTable(sqlQuery, args);
             if (table != null && table.Rows.Count == 1 && table.Columns.Count == 1 && table.Rows[0].ItemArray[0].GetType() == typeof(T))

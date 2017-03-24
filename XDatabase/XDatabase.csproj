@@ -80,6 +80,7 @@
   <ItemGroup>
     <Compile Include="Core\Transaction.cs" />
     <Compile Include="DatabaseType.cs" />
+    <Compile Include="XParameter.cs" />
     <Compile Include="XQueryOleDb.cs" />
     <Compile Include="XQueryMySql.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
