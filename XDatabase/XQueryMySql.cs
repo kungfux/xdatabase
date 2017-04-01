@@ -22,12 +22,11 @@ namespace XDatabase
     {
         public XQueryMySql()
         {
-            TargetedDatabaseType = DatabaseType.MySql;
+            
         }
 
         public XQueryMySql(string connectionString)
         {
-            TargetedDatabaseType = DatabaseType.Sqlite;
             ConnectionString = connectionString;
         }
     }
