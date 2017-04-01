@@ -24,7 +24,19 @@ namespace XDatabase.Core
     {
         public DbConnection Connection { get; private set; }
         public string ConnectionString;
-        public bool KeepConnectionOpen = false;
+
+        public bool KeepConnectionOpen
+        {
+            get { return _keepOpen;}
+            set
+            {
+                _keepOpen = value;
+                if (!value)
+                {
+                    CloseConnection();
+                }
+            }
+        }
 
         public int Timeout
         {
@@ -74,6 +86,7 @@ namespace XDatabase.Core
         }
 
         private int _timeout = (int)TimeSpan.FromSeconds(30).TotalMilliseconds;
+        private bool _keepOpen = false;
 
         private void OpenConnection()
         {

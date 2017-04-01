@@ -32,7 +32,8 @@ namespace XDatabaseTests.Sqlite
         [Test]
         public void TestSqliteConnectionCannotBeEstablished()
         {
-            var xQuery = new XQuerySqlite($"Data Source={Guid.NewGuid()};FailIfMissing=true;");
+            string connectionString = $"Data Source={Guid.NewGuid()};FailIfMissing=true;";
+            var xQuery = new XQuerySqlite(connectionString);
             Assert.IsFalse(xQuery.TestConnection());
         }
 
@@ -47,6 +48,20 @@ namespace XDatabaseTests.Sqlite
         public void TestNoActiveConnectionAfterDefiningConnectionString()
         {
             var xQuery = new XQuerySqlite(SetUp.SqliteConnectionString);
+            Assert.IsFalse(xQuery.IsConnectionActive);
+        }
+
+        [Test]
+        public void TestConnectionIsBeingClosedByChangingKeepConnectionOpen()
+        {
+            const string select = "select 123;";
+            var xQuery = new XQuerySqlite()
+            {
+                ConnectionString = SetUp.SqliteConnectionString,
+                KeepConnectionOpen = true
+            };
+            xQuery.SelectCellAs<long>(select);
+            xQuery.KeepConnectionOpen = false;
             Assert.IsFalse(xQuery.IsConnectionActive);
         }
     }
