@@ -2,15 +2,15 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
   <metadata>
     <id>XDatabase</id>
-    <version>2.0.0-beta</version>
+    <version>2.0.0</version>
     <authors>kungfux</authors>
     <owners>kungfux</owners>
     <licenseUrl>https://www.apache.org/licenses/LICENSE-2.0</licenseUrl>
     <projectUrl>https://github.com/kungfux/xdatabase</projectUrl>
     <iconUrl>https://cloud.githubusercontent.com/assets/10548881/24018440/ea78b658-0aa4-11e7-860b-e2326e80d88c.png</iconUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <description>XDatabase is a simple unified interface to interact with SQLite, MySQL and MS Access databases</description>
-    <releaseNotes>This is a first public release.</releaseNotes>
+    <description>XDatabase is a simple unified library to interact with SQLite, MySQL and MS Access databases (through OLEDB driver). In addition, it contains a set of methods to simplify the data selection, working with binary data etc.</description>
+    <releaseNotes></releaseNotes>
     <copyright>Copyright © Alexander Fuks 2017</copyright>
     <tags>XDatabase SQLite MySQL MS Access Database OLE DB</tags>
     <dependencies>
