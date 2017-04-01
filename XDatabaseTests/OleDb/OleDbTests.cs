@@ -22,11 +22,11 @@ namespace XDatabaseTests.OleDb
     public class OleDbTests
     {
         [Test]
-        public void TestOleDbConnectionStringIsNullIfNotValid()
+        public void TestOleDbConnectionCannotBeEstablished()
         {
             const string connectionString = "Source?";
             var xQuery = new XQueryOleDb(connectionString);
-            Assert.IsNull(xQuery.ConnectionString);
+            Assert.IsFalse(xQuery.TestConnection());
         }
 
         [Test]

@@ -23,17 +23,17 @@ namespace XDatabaseTests.Sqlite
     public class ConnectionStringTests
     {
         [Test]
-        public void TestConnectionStringIsAcceptedInCaseSuccessfulConnection()
+        public void TestSqliteConnectionCanBeEstablished()
         {
             var xQuery = new XQuerySqlite(SetUp.SqliteConnectionString);
-            Assert.AreEqual(SetUp.SqliteConnectionString, xQuery.ConnectionString);
+            Assert.IsTrue(xQuery.TestConnection());
         }
 
         [Test]
-        public void TestConnectionStringIsRejectedInCaseNoSuccessfulConnection()
+        public void TestSqliteConnectionCannotBeEstablished()
         {
             var xQuery = new XQuerySqlite($"Data Source={Guid.NewGuid()};FailIfMissing=true;");
-            Assert.IsNull(xQuery.ConnectionString);
+            Assert.IsFalse(xQuery.TestConnection());
         }
 
         [Test]

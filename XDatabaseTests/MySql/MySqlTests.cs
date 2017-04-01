@@ -22,11 +22,11 @@ namespace XDatabaseTests.MySql
     public class MySqlTests
     {
         [Test]
-        public void TestMySqlConnectionStringIsNullIfNotValid()
+        public void TestMySqlConnectionCannotBeEstablished()
         {
             const string connectionString = "Source?";
             var xQuery = new XQueryMySql(connectionString);
-            Assert.IsNull(xQuery.ConnectionString);
+            Assert.IsFalse(xQuery.TestConnection());
         }
 
         [Test]

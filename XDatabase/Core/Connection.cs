@@ -23,18 +23,7 @@ namespace XDatabase.Core
     public abstract partial class XQuery
     {
         public DbConnection Connection { get; private set; }
-
-        public string ConnectionString
-        {
-            get { return _connectionString; }
-            set
-            {
-                if (CheckIsConnectionCanBeEstablished(value))
-                {
-                    _connectionString = value;
-                }
-            }
-        }
+        public string ConnectionString;
 
         public int Timeout
         {
@@ -62,10 +51,9 @@ namespace XDatabase.Core
             }
         }
 
-        private string _connectionString;
         private int _timeout = (int)TimeSpan.FromSeconds(30).TotalMilliseconds;
 
-        private bool CheckIsConnectionCanBeEstablished(string connectionString)
+        public bool TestConnection(string connectionString = null)
         {
             ClearError();
 
@@ -73,7 +61,7 @@ namespace XDatabase.Core
             {
                 try
                 {
-                    newConnection.ConnectionString = connectionString;
+                    newConnection.ConnectionString = connectionString ?? ConnectionString;
                     newConnection.Open();
                     newConnection.Close();
                     return true;
