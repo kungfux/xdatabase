@@ -20,10 +20,11 @@ using System.Data.Common;
 
 namespace XDatabase.Core
 {
-    public abstract partial class XQuery
+    public abstract partial class XQuery : IDisposable
     {
         public DbConnection Connection { get; private set; }
         public string ConnectionString;
+        public bool KeepConnectionOpen = false;
 
         public int Timeout
         {
@@ -51,8 +52,6 @@ namespace XDatabase.Core
             }
         }
 
-        private int _timeout = (int)TimeSpan.FromSeconds(30).TotalMilliseconds;
-
         public bool TestConnection(string connectionString = null)
         {
             ClearError();
@@ -74,6 +73,8 @@ namespace XDatabase.Core
             }
         }
 
+        private int _timeout = (int)TimeSpan.FromSeconds(30).TotalMilliseconds;
+
         private void OpenConnection()
         {
             ClearError();
@@ -92,10 +93,15 @@ namespace XDatabase.Core
 
         private void CloseConnection()
         {
-            if (Connection != null && !IsInTransactionMode)
+            if (Connection != null && !IsInTransactionMode && !KeepConnectionOpen)
             {
                 Connection.Close();
             }
+        }
+
+        public void Dispose()
+        {
+            Connection.Close();
         }
     }
 }

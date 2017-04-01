@@ -37,6 +37,13 @@ namespace XDatabaseTests.Sqlite
         }
 
         [Test]
+        public void TestNoErrorWhileCheckingTheConnectionWithNull()
+        {
+            var xQuery = new XQuerySqlite();
+            Assert.IsFalse(xQuery.TestConnection());
+        }
+
+        [Test]
         public void TestNoActiveConnectionAfterDefiningConnectionString()
         {
             var xQuery = new XQuerySqlite(SetUp.SqliteConnectionString);

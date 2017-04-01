@@ -57,6 +57,13 @@ namespace XDatabaseTests.Sqlite
         }
 
         [Test]
+        public void TestKeepConnectionOpenIsFalseByDefault()
+        {
+            var xQuery = new XQuerySqlite();
+            Assert.IsFalse(xQuery.KeepConnectionOpen);
+        }
+
+        [Test]
         public void TestSqliteInstanceTypeEqualsToSqlite()
         {
             var xQuery = new XQuerySqlite();
