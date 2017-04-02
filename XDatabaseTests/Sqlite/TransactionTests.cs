@@ -69,5 +69,29 @@ namespace XDatabaseTests.Sqlite
             xQuery.BeginTransaction();
             Assert.True(xQuery.IsInTransactionMode);
         }
+
+        [Test]
+        public void TestConnectionIsNotBeingClosedIfKeepOpenWhenCommit()
+        {
+            var xQuery = new XQuerySqlite(SetUp.SqliteConnectionString)
+            {
+                KeepConnectionOpen = true
+            };
+            xQuery.BeginTransaction();
+            xQuery.CommitTransaction();
+            Assert.IsTrue(xQuery.IsConnectionActive);
+        }
+
+        [Test]
+        public void TestConnectionIsNotBeingClosedIfKeepOpenWhenRollback()
+        {
+            var xQuery = new XQuerySqlite(SetUp.SqliteConnectionString)
+            {
+                KeepConnectionOpen = true
+            };
+            xQuery.BeginTransaction();
+            xQuery.RollbackTransaction();
+            Assert.IsTrue(xQuery.IsConnectionActive);
+        }
     }
 }

@@ -20,18 +20,20 @@ using System.Data.Common;
 
 namespace XDatabase.Core
 {
-    public abstract partial class XQuery
+    public abstract partial class XQuery : IDisposable
     {
         public DbConnection Connection { get; private set; }
+        public string ConnectionString;
 
-        public string ConnectionString
+        public bool KeepConnectionOpen
         {
-            get { return _connectionString; }
+            get { return _keepOpen;}
             set
             {
-                if (CheckIsConnectionCanBeEstablished(value))
+                _keepOpen = value;
+                if (!value)
                 {
-                    _connectionString = value;
+                    CloseConnection();
                 }
             }
         }
@@ -62,10 +64,7 @@ namespace XDatabase.Core
             }
         }
 
-        private string _connectionString;
-        private int _timeout = (int)TimeSpan.FromSeconds(30).TotalMilliseconds;
-
-        private bool CheckIsConnectionCanBeEstablished(string connectionString)
+        public bool TestConnection(string connectionString = null)
         {
             ClearError();
 
@@ -73,7 +72,7 @@ namespace XDatabase.Core
             {
                 try
                 {
-                    newConnection.ConnectionString = connectionString;
+                    newConnection.ConnectionString = connectionString ?? ConnectionString;
                     newConnection.Open();
                     newConnection.Close();
                     return true;
@@ -85,6 +84,9 @@ namespace XDatabase.Core
                 }
             }
         }
+
+        private int _timeout = (int)TimeSpan.FromSeconds(30).TotalMilliseconds;
+        private bool _keepOpen = false;
 
         private void OpenConnection()
         {
@@ -104,10 +106,15 @@ namespace XDatabase.Core
 
         private void CloseConnection()
         {
-            if (Connection != null && !IsInTransactionMode)
+            if (Connection != null && !IsInTransactionMode && !KeepConnectionOpen)
             {
                 Connection.Close();
             }
+        }
+
+        public void Dispose()
+        {
+            Connection.Close();
         }
     }
 }

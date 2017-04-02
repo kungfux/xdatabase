@@ -57,10 +57,17 @@ namespace XDatabaseTests.Sqlite
         }
 
         [Test]
-        public void TestInitialStateOfDbTypeEqualsToSpecifiedOne()
+        public void TestKeepConnectionOpenIsFalseByDefault()
         {
             var xQuery = new XQuerySqlite();
-            Assert.AreEqual(DatabaseType.Sqlite, xQuery.TargetedDatabaseType);
+            Assert.IsFalse(xQuery.KeepConnectionOpen);
+        }
+
+        [Test]
+        public void TestSqliteInstanceTypeEqualsToSqlite()
+        {
+            var xQuery = new XQuerySqlite();
+            Assert.AreEqual(typeof(XQuerySqlite), xQuery.GetType());
         }
     }
 }

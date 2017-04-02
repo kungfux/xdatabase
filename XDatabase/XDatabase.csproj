@@ -79,7 +79,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Core\Transaction.cs" />
-    <Compile Include="DatabaseType.cs" />
     <Compile Include="XParameter.cs" />
     <Compile Include="XQueryOleDb.cs" />
     <Compile Include="XQueryMySql.cs" />
@@ -88,7 +87,6 @@
     <Compile Include="Core\Binary.cs" />
     <Compile Include="Core\Connection.cs" />
     <Compile Include="Core\Error.cs" />
-    <Compile Include="Core\Runtime.cs" />
     <Compile Include="Core\Result.cs" />
     <Compile Include="XQuerySqlite.cs" />
     <Compile Include="Core\Update.cs" />

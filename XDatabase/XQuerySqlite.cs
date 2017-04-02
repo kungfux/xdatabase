@@ -22,12 +22,11 @@ namespace XDatabase
     {
         public XQuerySqlite()
         {
-            TargetedDatabaseType = DatabaseType.Sqlite;
+            
         }
 
         public XQuerySqlite(string connectionString)
         {
-            TargetedDatabaseType = DatabaseType.Sqlite;
             ConnectionString = connectionString;
         }
     }

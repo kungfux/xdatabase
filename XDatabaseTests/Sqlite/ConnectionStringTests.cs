@@ -23,23 +23,45 @@ namespace XDatabaseTests.Sqlite
     public class ConnectionStringTests
     {
         [Test]
-        public void TestConnectionStringIsAcceptedInCaseSuccessfulConnection()
+        public void TestSqliteConnectionCanBeEstablished()
         {
             var xQuery = new XQuerySqlite(SetUp.SqliteConnectionString);
-            Assert.AreEqual(SetUp.SqliteConnectionString, xQuery.ConnectionString);
+            Assert.IsTrue(xQuery.TestConnection());
         }
 
         [Test]
-        public void TestConnectionStringIsRejectedInCaseNoSuccessfulConnection()
+        public void TestSqliteConnectionCannotBeEstablished()
         {
-            var xQuery = new XQuerySqlite($"Data Source={Guid.NewGuid()};FailIfMissing=true;");
-            Assert.IsNull(xQuery.ConnectionString);
+            string connectionString = $"Data Source={Guid.NewGuid()};FailIfMissing=true;";
+            var xQuery = new XQuerySqlite(connectionString);
+            Assert.IsFalse(xQuery.TestConnection());
+        }
+
+        [Test]
+        public void TestNoErrorWhileCheckingTheConnectionWithNull()
+        {
+            var xQuery = new XQuerySqlite();
+            Assert.IsFalse(xQuery.TestConnection());
         }
 
         [Test]
         public void TestNoActiveConnectionAfterDefiningConnectionString()
         {
             var xQuery = new XQuerySqlite(SetUp.SqliteConnectionString);
+            Assert.IsFalse(xQuery.IsConnectionActive);
+        }
+
+        [Test]
+        public void TestConnectionIsBeingClosedByChangingKeepConnectionOpen()
+        {
+            const string select = "select 123;";
+            var xQuery = new XQuerySqlite()
+            {
+                ConnectionString = SetUp.SqliteConnectionString,
+                KeepConnectionOpen = true
+            };
+            xQuery.SelectCellAs<long>(select);
+            xQuery.KeepConnectionOpen = false;
             Assert.IsFalse(xQuery.IsConnectionActive);
         }
     }

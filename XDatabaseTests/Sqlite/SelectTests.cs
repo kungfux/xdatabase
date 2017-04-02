@@ -161,6 +161,19 @@ namespace XDatabaseTests.Sqlite
             Assert.IsNotEmpty(xQuery.LastErrorMessage);
         }
 
+        [Test]
+        public void TestConnectionIsOpenAfterSelect()
+        {
+            const string sqlSelect = "select 123;";
+            var xQuery = new XQuerySqlite()
+            {
+                ConnectionString = SetUp.SqliteConnectionString,
+                KeepConnectionOpen = true
+            };
+            xQuery.SelectCellAs<long>(sqlSelect);
+            Assert.IsTrue(xQuery.IsConnectionActive);
+        }
+
         private void XQuery_OnError(string pErrorMessage)
         {
             // empty subscriber

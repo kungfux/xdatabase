@@ -22,25 +22,18 @@ namespace XDatabaseTests.OleDb
     public class OleDbTests
     {
         [Test]
-        public void TestOleDbInstanceCanBeCreated()
-        {
-            var xQuery = new XQueryOleDb();
-            Assert.AreEqual(DatabaseType.OleDb, xQuery.TargetedDatabaseType);
-        }
-
-        [Test]
-        public void TestOleDbConnectionStringIsNullIfNotValid()
+        public void TestOleDbConnectionCannotBeEstablished()
         {
             const string connectionString = "Source?";
             var xQuery = new XQueryOleDb(connectionString);
-            Assert.IsNull(xQuery.ConnectionString);
+            Assert.IsFalse(xQuery.TestConnection());
         }
 
         [Test]
-        public void TestInitialStateOfDbTypeEqualsToSpecifiedOne()
+        public void TestOleDbInstanceTypeEqualsToOleDb()
         {
             var xQuery = new XQueryOleDb();
-            Assert.AreEqual(DatabaseType.OleDb, xQuery.TargetedDatabaseType);
+            Assert.AreEqual(typeof(XQueryOleDb), xQuery.GetType());
         }
     }
 }

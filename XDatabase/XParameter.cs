@@ -21,6 +21,10 @@ namespace XDatabase
         public string ParameterName;
         public object Value;
 
+        public XParameter()
+        {
+        }
+
         public XParameter(string name, object value)
         {
             ParameterName = name;

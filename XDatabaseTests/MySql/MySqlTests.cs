@@ -22,25 +22,18 @@ namespace XDatabaseTests.MySql
     public class MySqlTests
     {
         [Test]
-        public void TestMySqlInstanceCanBeCreated()
-        {
-            var xQuery = new XQueryMySql();
-            Assert.AreEqual(DatabaseType.MySql, xQuery.TargetedDatabaseType);
-        }
-
-        [Test]
-        public void TestMySqlConnectionStringIsNullIfNotValid()
+        public void TestMySqlConnectionCannotBeEstablished()
         {
             const string connectionString = "Source?";
             var xQuery = new XQueryMySql(connectionString);
-            Assert.IsNull(xQuery.ConnectionString);
+            Assert.IsFalse(xQuery.TestConnection());
         }
 
         [Test]
-        public void TestInitialStateOfDbTypeEqualsToSpecifiedOne()
+        public void TestMySqlInstanceTypeEqualsToMySql()
         {
             var xQuery = new XQueryMySql();
-            Assert.AreEqual(DatabaseType.MySql, xQuery.TargetedDatabaseType);
+            Assert.AreEqual(typeof(XQueryMySql), xQuery.GetType());
         }
     }
 }
