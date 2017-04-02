@@ -21,7 +21,7 @@ namespace XDatabase.Core
 {
     public abstract partial class XQuery
     {
-        public int Update(string pSqlQuery, params DbParameter[] pDataArgs)
+        public int Update(string pSqlQuery, params XParameter[] args)
         {
             ClearError();
             try
@@ -36,11 +36,12 @@ namespace XDatabase.Core
                     command.CommandText = pSqlQuery;
                     command.CommandTimeout = Timeout;
 
-                    if (pDataArgs != null)
+                    if (args != null)
                     {
-                        foreach (var arg in pDataArgs)
+                        foreach (var arg in args)
                         {
-                            command.Parameters.Add(arg);
+                            var parameter = GetParameter(arg.ParameterName, arg.Value);
+                            command.Parameters.Add(parameter);
                         }
                     }
                     return command.ExecuteNonQuery();
@@ -57,19 +58,19 @@ namespace XDatabase.Core
             }
         }
 
-        public int Delete(string pSqlQuery, params DbParameter[] pDataArgs)
+        public int Delete(string pSqlQuery, params XParameter[] args)
         {
-            return Update(pSqlQuery, pDataArgs);
+            return Update(pSqlQuery, args);
         }
 
-        public int Insert(string pSqlQuery, params DbParameter[] pDataArgs)
+        public int Insert(string pSqlQuery, params XParameter[] args)
         {
-            return Update(pSqlQuery, pDataArgs);
+            return Update(pSqlQuery, args);
         }
 
-        public int Create(string pSqlQuery, params DbParameter[] pDataArgs)
+        public int Create(string pSqlQuery, params XParameter[] args)
         {
-            return Update(pSqlQuery, pDataArgs);
+            return Update(pSqlQuery, args);
         }
     }
 }

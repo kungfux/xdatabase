@@ -28,11 +28,7 @@ namespace XDatabase.Core
 
             try
             {
-                var parameter = GetParameter();
-                parameter.ParameterName = argumentNameWithBinaryData;
-                parameter.Value = binaryData;
-
-                return Update(sqlQuery, parameter) > 0;
+                return Update(sqlQuery, new XParameter(argumentNameWithBinaryData, binaryData)) >= (int)XResult.ChangesApplied;
             }
             catch (Exception ex)
             {
