@@ -22,13 +22,20 @@ namespace XDatabase.Core
 {
     public abstract partial class XQuery
     {
-        public bool InsertBinaryIntoCell(byte[] binaryData, string sqlQuery, string argumentNameWithBinaryData)
+        public bool InsertBinaryIntoCell(byte[] binaryData, string sqlQuery, string argumentNameWithBinaryData, params XParameter[] args)
         {
             ClearError();
 
+            var parameters = new XParameter[args.Length + 1];
+            for (var i = 0; i < args.Length; i++)
+            {
+                parameters[i] = args[i];
+            }
+            parameters[args.Length] = new XParameter(argumentNameWithBinaryData, binaryData);
+
             try
             {
-                return Update(sqlQuery, new XParameter(argumentNameWithBinaryData, binaryData)) >= (int)XResult.ChangesApplied;
+                return Update(sqlQuery, parameters) >= (int)XResult.ChangesApplied;
             }
             catch (Exception ex)
             {
@@ -37,7 +44,7 @@ namespace XDatabase.Core
             }
         }
 
-        public bool InsertFileIntoCell(string fileFullPath, string sqlQuery, string argumentNameWithFilePath)
+        public bool InsertFileIntoCell(string fileFullPath, string sqlQuery, string argumentNameWithFilePath, params XParameter[] args)
         {
             ClearError();
 
@@ -48,7 +55,7 @@ namespace XDatabase.Core
                 fileStream.Read(fileBytes, 0, (int)fileStream.Length);
                 fileStream.Close();
 
-                return InsertBinaryIntoCell(fileBytes, sqlQuery, argumentNameWithFilePath);
+                return InsertBinaryIntoCell(fileBytes, sqlQuery, argumentNameWithFilePath, args);
             }
             catch (Exception ex)
             {
@@ -75,13 +82,13 @@ namespace XDatabase.Core
             }
         }
 
-        public bool SelectBinaryAndSave(string outputFileName, string sqlQuery)
+        public bool SelectBinaryAndSave(string outputFileName, string sqlQuery, params XParameter[] args)
         {
             ClearError();
 
             try
             {
-                var fileBytes = SelectCellAs<byte[]>(sqlQuery);
+                var fileBytes = SelectCellAs<byte[]>(sqlQuery, args);
                 var newFileStream = new FileStream(outputFileName, FileMode.CreateNew);
                 newFileStream.Write(fileBytes, 0, fileBytes.Length);
                 newFileStream.Close();
