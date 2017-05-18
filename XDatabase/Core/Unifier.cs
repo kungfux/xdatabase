@@ -15,96 +15,22 @@
  */
 
 using System.Data.Common;
-using System.Data.OleDb;
-using System.Data.SQLite;
-using MySql.Data.MySqlClient;
 
 namespace XDatabase.Core
 {
     public abstract partial class XQuery
     {
-        private const string TypeMySql = "XDatabase.XQueryMySql";
-        private const string TypeOleDb = "XDatabase.XQueryOleDb";
-        private const string TypeSqlite = "XDatabase.XQuerySqlite";
-
-        private DbParameter GetParameter()
-        {
-            var type = GetType().FullName;
-            switch (type)
-            {
-                case TypeMySql:
-                    return new MySqlParameter();
-                case TypeOleDb:
-                    return new OleDbParameter();
-                case TypeSqlite:
-                    return new SQLiteParameter();
-                default:
-                    return null;
-            }
-        }
+        protected abstract DbParameter GetParameter();
+        protected abstract DbConnection GetConnection();
+        protected abstract DbDataAdapter GetDataAdapter();
+        protected abstract DbCommand GetCommand();
 
         private DbParameter GetParameter(string name, object value)
         {
-            var type = GetType().FullName;
-            switch (type)
-            {
-                case TypeMySql:
-                    return new MySqlParameter(name, value);
-                case TypeOleDb:
-                    return new OleDbParameter(name, value);
-                case TypeSqlite:
-                    return new SQLiteParameter(name, value);
-                default:
-                    return null;
-            }
-        }
-
-        private DbConnection GetConnection()
-        {
-            var type = GetType().FullName;
-            switch (type)
-            {
-                case TypeMySql:
-                    return new MySqlConnection();
-                case TypeOleDb:
-                    return new OleDbConnection();
-                case TypeSqlite:
-                    return new SQLiteConnection();
-                default:
-                    return null;
-            }
-        }
-
-        private DbDataAdapter GetDataAdapter()
-        {
-            var type = GetType().FullName;
-            switch (type)
-            {
-                case TypeMySql:
-                    return new MySqlDataAdapter();
-                case TypeOleDb:
-                    return new OleDbDataAdapter();
-                case TypeSqlite:
-                    return new SQLiteDataAdapter();
-                default:
-                    return null;
-            }
-        }
-
-        private DbCommand GetCommand()
-        {
-            var type = GetType().FullName;
-            switch (type)
-            {
-                case TypeMySql:
-                    return new MySqlCommand();
-                case TypeOleDb:
-                    return new OleDbCommand();
-                case TypeSqlite:
-                    return new SQLiteCommand();
-                default:
-                    return null;
-            }
+            var parameter = GetParameter();
+            parameter.ParameterName = name;
+            parameter.Value = value;
+            return parameter;
         }
     }
 }

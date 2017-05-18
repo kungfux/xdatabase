@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+using System.Data.Common;
+using MySql.Data.MySqlClient;
 using XDatabase.Core;
 
 namespace XDatabase
@@ -29,5 +31,10 @@ namespace XDatabase
         {
             ConnectionString = connectionString;
         }
+
+        protected override DbParameter GetParameter() => new MySqlParameter();
+        protected override DbConnection GetConnection() => new MySqlConnection();
+        protected override DbDataAdapter GetDataAdapter() => new MySqlDataAdapter();
+        protected override DbCommand GetCommand() => new MySqlCommand();
     }
 }
