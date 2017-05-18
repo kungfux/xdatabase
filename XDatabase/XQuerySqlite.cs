@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+using System.Data.Common;
+using System.Data.SQLite;
 using XDatabase.Core;
 
 namespace XDatabase
@@ -29,5 +31,10 @@ namespace XDatabase
         {
             ConnectionString = connectionString;
         }
+
+        protected override DbParameter GetParameter() => new SQLiteParameter();
+        protected override DbConnection GetConnection() => new SQLiteConnection();
+        protected override DbDataAdapter GetDataAdapter() => new SQLiteDataAdapter();
+        protected override DbCommand GetCommand() => new SQLiteCommand();
     }
 }

@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+using System.Data.Common;
+using System.Data.OleDb;
 using XDatabase.Core;
 
 namespace XDatabase
@@ -29,5 +31,10 @@ namespace XDatabase
         {
             ConnectionString = connectionString;
         }
+
+        protected override DbParameter GetParameter() => new OleDbParameter();
+        protected override DbConnection GetConnection() => new OleDbConnection();
+        protected override DbDataAdapter GetDataAdapter() => new OleDbDataAdapter();
+        protected override DbCommand GetCommand() => new OleDbCommand();
     }
 }
