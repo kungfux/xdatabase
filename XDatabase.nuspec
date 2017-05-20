@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
   <metadata>
     <id>XDatabase</id>
-    <version>2.0.0</version>
+    <version>2.0.1</version>
     <authors>kungfux</authors>
     <owners>kungfux</owners>
     <licenseUrl>https://www.apache.org/licenses/LICENSE-2.0</licenseUrl>
@@ -14,7 +14,7 @@
     <copyright>Copyright © Alexander Fuks 2017</copyright>
     <tags>XDatabase SQLite MySQL MS Access Database OLE DB</tags>
     <dependencies>
-      <dependency id="System.Data.SQLite.Core" version="1.0.104.0" />
+      <dependency id="System.Data.SQLite.Core" version="1.0.105.1" />
       <dependency id="MySql.Data" version="6.9.9" />
     </dependencies>
   </metadata>
