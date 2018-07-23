@@ -11,6 +11,7 @@ XDatabase provides unified methods to interact with various databases. It allows
 * SQLite
 * MySql
 * MS Access (.mdb) _*through OleDb connection_
+* MS SQL
 
 ## Dependency
 _Note: The only dependencies must be met according to databases you are going to use._
