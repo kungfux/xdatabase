@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+using System;
 using NUnit.Framework;
 using XDatabase;
 
@@ -29,10 +30,10 @@ namespace XDatabaseTests.Sqlite
         }
 
         [Test]
-        public void TestInitialStateOfTimeoutIs30S()
+        public void TestInitialStateOfTimeoutIs30s()
         {
             var xQuery = new XQuerySqlite();
-            Assert.AreEqual(30000, xQuery.Timeout);
+            Assert.AreEqual(TimeSpan.FromSeconds(30).Seconds, xQuery.Timeout);
         }
 
         [Test]

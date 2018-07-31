@@ -85,7 +85,7 @@ namespace XDatabase.Core
             }
         }
 
-        private int _timeout = (int)TimeSpan.FromSeconds(30).TotalMilliseconds;
+        private int _timeout = TimeSpan.FromSeconds(30).Seconds;
         private bool _keepOpen = false;
 
         private void OpenConnection()
